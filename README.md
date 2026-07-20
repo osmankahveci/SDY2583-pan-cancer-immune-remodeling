@@ -1,200 +1,172 @@
 # SDY2583 pan-cancer immune remodeling
 
-Reproducible analysis code for a secondary, multi-panel reanalysis of the
-publicly available ImmPort SDY2583 *Blood Immunotypes* flow-cytometry study.
-The project evaluates cancer-associated peripheral immune remodeling across
-complementary lymphoid and myeloid panels using demographic adjustment,
-composite phenotypes, and prespecified robustness analyses.
+Reproducible analysis code for the secondary multi-panel reanalysis of ImmPort
+SDY2583 *Blood Immunotypes*. The repository covers CP7, CP8, CP10, CP16, CP22,
+CP23, CP24, CP25, CP26, and CP28, including demographic adjustment, composite
+phenotypes, robustness analyses, clinical annotation, and figure generation.
 
-## Repository status
+## Release status
 
-This is a working reproducibility release. Raw FCS files, participant-level
-clinical data, derived participant-level matrices, serialized workspaces, and
-analysis outputs are intentionally excluded from Git.
+This is a provenance-tracked working reproducibility release. Raw FCS files,
+participant-level metadata and matrices, serialized workspaces, and generated
+outputs are excluded from Git.
 
-Two source-code provenance classes are kept separate:
+Two source classes are kept separate:
 
-- **Recovered scripts** are original analysis scripts found in the project
-  archive. Machine-specific paths and interactive file selection were replaced
-  with portable configuration helpers, but analytical definitions were not
-  intentionally changed. These files generally contain `SAFE` in their names.
-- **Reconstructed scripts** were rebuilt from archived output schemas,
-  thresholds, Methods/Results records, and recovered cross-panel conventions
-  when the original source file was not visible in the archive. These files
-  contain `RECONSTRUCTED` and remain provisional until their generated outputs
-  pass the archived benchmark comparisons.
+- **`SAFE`**: original analysis source recovered from the project archive and
+  modified only for portable paths and non-interactive execution.
+- **`RECONSTRUCTED`**: source rebuilt where the original script was not visible,
+  using archived thresholds, marker maps, feature schemas, composite
+  definitions, Methods/Results records, and numerical output tables.
 
-Do not remove the provenance suffixes. They prevent recovered source from being
-confused with code reconstructed after the analysis.
+Reconstructed code remains provisional until it executes locally and passes
+archived-output validation. Do not remove the provenance suffixes.
 
-## Current panel coverage
+## Panel coverage
 
-| Panel | Code currently included | Status and limitation |
+| Panel | Included source | Status |
 |---|---|---|
-| CP10 | Recovered Steps 2–8 | Step 1/1B source remains unlocated. |
-| CP16 | Recovered Steps 1–7B | Complete archived panel sequence located. |
-| CP22 | Recovered Steps 1–7B | Complete archived panel sequence located. |
-| CP23 | Recovered Steps 1–7B, including Step 6B repair | Complete archived panel sequence located. |
-| CP24 | Recovered pilot/QC codebook | Not the final full-cohort production sequence. |
-| CP7 | Reconstructed Steps 1, 2, 3A, 3B, and 4 | Requires local execution and archive-output validation before promotion to verified status. |
-| CP8, CP25, CP26, CP28 | Not yet reconstructed | Archived outputs exist, but source scripts were not visible in the inspected Drive trees. |
+| CP7 | Reconstructed Steps 1–7B | Full provisional pipeline, runner, validator. |
+| CP8 | Reconstructed Steps 1–7B | Full provisional pipeline, runner, validator. |
+| CP10 | Reconstructed Steps 1/1B + recovered Steps 2–8 | End-to-end sequence assembled. |
+| CP16 | Recovered Steps 1–7B | Complete recovered sequence and runner. |
+| CP22 | Recovered Steps 1–7B | Complete recovered sequence and runner. |
+| CP23 | Recovered Steps 1–7B, including Step 6B | Complete recovered sequence and runner. |
+| CP24 | Recovered pilot codebook + reconstructed full-cohort Steps 1–7B | Pilot and 850-subject analysis kept separate. |
+| CP25 | Reconstructed Steps 1–7B | Full provisional pipeline, runner, validator. |
+| CP26 | Reconstructed Steps 1–7B | Includes BV510-A dump fallback for annotation-variant files. |
+| CP28 | Reconstructed Steps 1–7B | Full provisional T/NK-interface pipeline. |
 
-Panel-specific clinical-annotation scripts are included for CP10, CP16, CP22,
-and CP23. A standalone all-panel clinical-integration source script has not yet
-been recovered or reconstructed. See [PROVENANCE.md](PROVENANCE.md) for the
-full coverage statement.
+See [PROVENANCE.md](PROVENANCE.md) for panel-level evidence and limitations.
 
 ## Data access
 
-The source data are not redistributed here. Obtain SDY2583 directly from
-ImmPort:
+Source data are not redistributed. Obtain **SDY2583 — Blood Immunotypes** from
+ImmPort. Dataset DOI: <https://doi.org/10.21430/M3A0B9RD5T>. Use remains
+subject to ImmPort terms. See [DATA_ACCESS.md](DATA_ACCESS.md).
 
-- Study: **SDY2583 — Blood Immunotypes**
-- Dataset DOI: <https://doi.org/10.21430/M3A0B9RD5T>
-- ImmPort: <https://www.immport.org/>
-
-Use of the data remains subject to ImmPort terms and the documentation supplied
-with the study. See [DATA_ACCESS.md](DATA_ACCESS.md).
-
-## Repository layout
+## Repository structure
 
 ```text
 R/
-  shared/bootstrap.R
-  panels/
-    CP7/                    # reconstructed pipeline, currently Steps 1–4
-    CP10/                   # recovered pipeline, Steps 2–8
-    CP16/                   # recovered complete sequence
-    CP22/                   # recovered complete sequence
-    CP23/                   # recovered complete sequence
-    CP24/                   # recovered pilot/QC codebook
-config/
-  paths.example.R
+  integration/        # metadata and cross-panel score builders
+  shared/             # portable paths and common workflow engines
+  panels/CP*/         # panel-specific recovered/reconstructed source
+config/paths.example.R
 scripts/
-  00_install_dependencies.R
-  10_run_cp7_reconstructed.R
-  20_validate_cp7_reconstruction.R
+  01_run_all_panels.R
+  02_static_source_audit.R
+  10-19 panel runners
+  20-26 panel validators
+  30_validate_all_panels.R
   99_session_info.R
 ```
 
-## Software setup
+## Setup
 
-The exact R and package versions from the original analysis environment were
-not preserved in the Drive archive. Install the dependencies used by the
-included scripts from the repository root:
+Install dependencies:
 
-```r
-source("scripts/00_install_dependencies.R")
+```bash
+Rscript scripts/00_install_dependencies.R
 ```
 
-After running analyses, capture the actual environment:
+Copy `config/paths.example.R` to `config/paths.R` and configure local ImmPort,
+FCS, output, metadata, and optional archived-reference paths. The local config
+is ignored by Git.
 
-```r
-source("scripts/99_session_info.R")
-```
+## Metadata reconstruction
 
-The generated `session-info.txt` is written under `outputs/`, ignored by Git,
-and should be retained with the reproducibility record.
+`R/integration/STEP0_build_subject_metadata_matrix_RECONSTRUCTED.R` rebuilds the
+common subject/FCS metadata matrix from the unpacked ImmPort tabular package.
+It links subject, arm, and flow-result tables and standardizes:
 
-## Path configuration
+- DBG-style subject identifiers and panel/file mappings;
+- cancer versus healthy-control group;
+- age with the valid modeling range of 18–100 years and age strata;
+- sex and binary-sex sensitivity fields.
 
-Scripts do not depend on author-specific Desktop paths. By default, raw data
-are expected under `data/raw/<PANEL>` and outputs are written under
-`outputs/<PANEL>`.
+A local cancer-subgroup/therapy matrix may be supplied with
+`SDY2583_CLINICAL_ANNOTATION_FILE`. Participant-level merged outputs remain
+local and excluded from Git.
 
-For data stored elsewhere, copy `config/paths.example.R` to `config/paths.R`,
-edit the local paths, and source it before running scripts. The same values can
-be supplied through environment variables.
-
-For reconstructed CP7, configure at minimum:
-
-```r
-Sys.setenv(
-  SDY2583_CP7_FCS_DIR = "/local/path/to/CP7/FCS",
-  SDY2583_METADATA_MATRIX_FILE = "/local/path/to/subject_metadata_matrix.csv"
-)
-```
-
-The metadata matrix must contain a DBG-style `subject_id` and compatible
-disease, age, and sex columns. Reconstructing the standalone raw-ImmPort
-metadata-integration step remains a separate required task for full end-to-end
-reproduction from the downloaded tabular package alone.
-
-## Running reconstructed CP7
+## Run all panels
 
 From the repository root:
 
 ```bash
-Rscript scripts/10_run_cp7_reconstructed.R
+Rscript scripts/01_run_all_panels.R
 ```
 
-The runner executes:
+The master workflow builds/loads metadata, runs each panel in dependency order,
+performs panel validation, constructs the cross-panel immune-score matrix,
+records session information, and applies the all-panel release gate.
 
-1. FCS inventory and marker/channel QC;
-2. compensation, fixed-logicle transformation, and feature extraction;
-3. metadata merge and valid-age QC;
-4. age- and sex-adjusted feature models, global/module FDR, binary-sex
-   sensitivity, and event-count sensitivity;
-5. CP7 composite-score construction and adjusted models;
-6. automated benchmark validation.
+Run a subset with:
 
-The runner currently stops after Step 4. CP7 age-stratified/matching,
-disease-by-age interaction, threshold-sensitivity, clinical annotation, and
-figure-generation scripts still need to be reconstructed and validated.
-
-## CP7 validation
-
-The validation script always checks non-sensitive archived benchmarks,
-including:
-
-- 850 CP7 files and 850 unique subjects;
-- 850 successful Step 2 extractions;
-- median total and CD3+CD8+ event counts;
-- 832 valid-age model records;
-- 55 main CP7 features;
-- selected adjusted coefficients and the integrated composite coefficient.
-
-For full table-level validation, set the local archived-output root:
-
-```r
-Sys.setenv(
-  SDY2583_CP7_REFERENCE_DIR = "/local/path/to/SDY2583_CP7_FULL_850_ANALYSIS"
-)
-source("scripts/20_validate_cp7_reconstruction.R")
+```bash
+SDY2583_PANELS=CP7,CP8,CP25 Rscript scripts/01_run_all_panels.R
 ```
 
-Generated and archived tables are matched by stable keys and compared within a
-configurable numeric tolerance. Validation reports are written to
-`outputs/CP7/validation/` and are not committed.
+Individual runners:
 
-## Reproducibility and privacy safeguards
+```text
+CP7   scripts/10_run_cp7_reconstructed.R
+CP8   scripts/11_run_cp8_reconstructed.R
+CP25  scripts/12_run_cp25_reconstructed.R
+CP26  scripts/13_run_cp26_reconstructed.R
+CP28  scripts/14_run_cp28_reconstructed.R
+CP10  scripts/15_run_cp10_pipeline.R
+CP16  scripts/16_run_cp16_recovered.R
+CP22  scripts/17_run_cp22_recovered.R
+CP23  scripts/18_run_cp23_recovered.R
+CP24  scripts/19_run_cp24_full_reconstructed.R
+```
 
-- No raw FCS files or participant-level tables are committed.
-- `.RData`, `.rds`, FCS, local path configuration, and output directories are
-  excluded by `.gitignore`.
-- Recovered scripts and reconstructed scripts are explicitly distinguished.
-- Reconstructed code is not described as verified until archived-output
-  comparisons pass.
-- Missing steps remain documented rather than silently inferred.
+The CP24 runner executes the reconstructed 850-subject full-cohort sequence;
+the recovered pilot/QC codebook remains available separately.
 
-## Citation
+## Validation
 
-Cite this software repository together with the ImmPort dataset and the primary
-SDY2583 publication. Machine-readable citation metadata are provided in
-[CITATION.cff](CITATION.cff).
+Reconstructed-panel validators check fixed non-sensitive archive benchmarks,
+including file counts, successful extractions, event-count summaries, 832
+valid-age records where applicable, feature/score counts, selected adjusted
+coefficients, matching counts, robustness classifications, and required
+figures.
 
-Key sources:
+When `SDY2583_<PANEL>_REFERENCE_DIR` is configured, generated CSVs are also
+compared with archived tables by stable keys and numerical tolerance. Reports
+are written under `outputs/<PANEL>/validation/`.
 
-- Bhattacharya, S., Dunn, P., Thomas, C. G., et al. (2018). ImmPort, toward
-  repurposing of open access immunological assay data for translational and
-  clinical research. *Scientific Data, 5*, 180015.
-  <https://doi.org/10.1038/sdata.2018.15>
-- Dyikanov, D., et al. (2024). Comprehensive peripheral blood
-  immunoprofiling reveals five immunotypes with immunotherapy response
-  characteristics in patients with cancer. *Cancer Cell, 42*(5), 759–779.e12.
-  <https://doi.org/10.1016/j.ccell.2024.04.008>
+Recovered-panel runners use structural execution validation and optional local
+archive inventory checks. A panel should be called verified only after all
+required scripts execute and its validation report passes.
 
-## License
+## Static checks
 
-Code is released under the [MIT License](LICENSE). The source dataset is not
-covered by this software license.
+A data-free audit parses every R file, validates runner references and all ten
+panel directories, rejects author-specific paths and interactive file selection,
+and screens for accidentally committed data:
+
+```bash
+Rscript scripts/02_static_source_audit.R
+```
+
+The same audit runs through GitHub Actions in
+`.github/workflows/static-r-audit.yml`.
+
+## Safeguards
+
+- Raw data and participant-level outputs are not committed.
+- `.RData`, `.rds`, FCS, local configuration, and outputs are ignored.
+- Recovered and reconstructed source remain visibly distinguished.
+- Session information and validation reports are retained locally as release
+  evidence.
+- CP22 immunoglobulin-isotype scores represent B-cell isotype
+  architecture/repatterning, not total IgG or total IgA abundance.
+
+## Citation and license
+
+Cite this repository together with the ImmPort dataset and the primary SDY2583
+publication. Machine-readable metadata are in [CITATION.cff](CITATION.cff).
+Code is released under the [MIT License](LICENSE); the ImmPort data are not
+covered by that license.
