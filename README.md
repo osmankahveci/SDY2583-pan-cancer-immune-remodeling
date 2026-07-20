@@ -17,9 +17,9 @@ The archived source-code coverage is not identical across panels:
 
 | Panel | Archived code included | Important limitation |
 |---|---|---|
-| CP10 | Steps 2–7B | Step 1/1B source scripts were not located in the archive. |
+| CP10 | Steps 2–8 | Step 1/1B source scripts were not located in the archive. |
 | CP16 | Steps 1–7B | Complete archived panel sequence was located. |
-| CP22 | Steps 1B–7B | Step 1 source script was not located in the archive. |
+| CP22 | Steps 1–7B | Complete archived panel sequence was located. |
 | CP23 | Steps 1–7B, including the time-from-start repair | Complete archived panel sequence was located. |
 | CP24 | Pilot/QC codebook | This is not represented as the final full-cohort production pipeline. |
 | CP7, CP8, CP25, CP26, CP28 | Not included | Output artifacts were present, but the corresponding `.R` source scripts were not located. |
@@ -98,11 +98,11 @@ directly through the environment variables listed in the example file.
 
 ## Execution order
 
-Run scripts within each panel in filename step order. CP16 and CP23 contain the
-complete archived sequences and can begin with Step 1 after the corresponding
-FCS directory is configured. CP10 begins at Step 2 and CP22 at Step 1B; these
-scripts require the expected Step 1 `.RData` object to have been produced by
-the original, currently unlocated source step.
+Run scripts within each panel in filename step order. CP16, CP22, and CP23
+contain complete archived sequences and can begin with Step 1 after the
+corresponding FCS directory is configured. CP10 begins at Step 2; its scripts
+require the expected Step 1 `.RData` object to have been produced by the
+original, currently unlocated source step.
 
 Clinical-annotation and figure scripts also require the derived inputs named
 inside each script. These inputs are deliberately not versioned because they
