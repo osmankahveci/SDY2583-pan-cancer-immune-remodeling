@@ -32,7 +32,16 @@ parse_results <- do.call(rbind, parse_results)
 read_text <- function(path) {
   paste(readLines(path, warn = FALSE, encoding = "UTF-8"), collapse = "\n")
 }
+strip_comment_lines <- function(text) {
+  lines <- strsplit(text, "\n", fixed = TRUE)[[1]]
+  lines <- lines[!grepl("^\\s*#", lines)]
+  paste(lines, collapse = "\n")
+}
 source_text <- setNames(vapply(r_files, read_text, character(1)), r_files)
+# Do not scan the audit's own rule declarations, and ignore comment-only legacy
+# path examples. All files are still parsed above.
+scan_text <- source_text[basename(names(source_text)) != "02_static_source_audit.R"]
+scan_text <- vapply(scan_text, strip_comment_lines, character(1))
 
 forbidden_patterns <- c(
   hard_coded_macos_user = "/Users/[A-Za-z0-9._-]+/",
@@ -41,7 +50,7 @@ forbidden_patterns <- c(
 )
 forbidden_parts <- lapply(names(forbidden_patterns), function(name) {
   pattern <- forbidden_patterns[[name]]
-  hit <- vapply(source_text, grepl, logical(1), pattern = pattern, perl = TRUE)
+  hit <- vapply(scan_text, grepl, logical(1), pattern = pattern, perl = TRUE)
   if (!any(hit)) {
     return(data.frame(
       rule = character(0), file = character(0), pass = logical(0),
@@ -50,7 +59,7 @@ forbidden_parts <- lapply(names(forbidden_patterns), function(name) {
   }
   data.frame(
     rule = rep(name, sum(hit)),
-    file = substring(names(source_text)[hit], nchar(root) + 2L),
+    file = substring(names(scan_text)[hit], nchar(root) + 2L),
     pass = rep(FALSE, sum(hit)),
     stringsAsFactors = FALSE
   )
