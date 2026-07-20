@@ -9,7 +9,10 @@ rp_quantitative_figure <- function(data, features, statistics, output_file, labe
   labels <- labels %||% stats::setNames(features,features)
   labels <- labels[features]
   labels[is.na(labels)] <- features[is.na(labels)]
-  fdr_col <- rp_first_col(statistics, c("fdr_all","FDR_all","fdr","targeted_fdr","fdr_within_module"))
+  fdr_col <- rp_first_col(statistics, c(
+    "fdr_all", "FDR_all", "p_FDR_all", "p_FDR_scores", "p_FDR_module",
+    "fdr", "targeted_fdr", "fdr_within_module", "FDR_within_module"
+  ))
   if (is.na(fdr_col)) statistics$figure_fdr <- NA_real_ else statistics$figure_fdr <- suppressWarnings(as.numeric(statistics[[fdr_col]]))
 
   long <- data |> dplyr::select(subject_id,disease_group,dplyr::all_of(features)) |>
@@ -71,7 +74,7 @@ rp_flow_density_plot <- function(exprs, x, y, x_threshold=NULL, y_threshold=NULL
 
 rp_save_flow_atlas <- function(plots, output_file, ncol=2, width=9, height=NULL) {
   rp_install_and_load(c("patchwork","ggplot2"))
-  plots <- Filter(Negate(is.null),plots)
+  plots<-Filter(Negate(is.null),plots)
   if(length(plots)==0L) stop("No flow plots were generated.")
   if(is.null(height)) height<-4*ceiling(length(plots)/ncol)
   atlas<-patchwork::wrap_plots(plots,ncol=ncol)
