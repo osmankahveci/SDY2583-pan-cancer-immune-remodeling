@@ -1,0 +1,2 @@
+# CP28 Step 1 reconstructed inventory and marker/channel QC.
+rm(list=ls()); source(file.path(Sys.getenv("SDY2583_REPO_ROOT",unset="."),"R","shared","reconstructed_panel_framework.R")); rp_install_and_load(c("dplyr","readr","stringr","tibble","purrr","tidyr"),"flowCore"); source(file.path(sd_repo_root(),"R","panels","CP28","MANIFEST_RECONSTRUCTED.R")); result<-rp_inventory("CP28",CP28_MANIFEST$expected_markers,CP28_MANIFEST$fallback_channels); print(result$summary); message("Archived CP28 benchmark: 850 files, two channel-pattern and three marker-pattern variants.")
