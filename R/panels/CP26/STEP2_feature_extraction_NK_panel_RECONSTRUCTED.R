@@ -1,0 +1,33 @@
+# CP26 Step 2 reconstructed NK/innate cytotoxic feature extraction.
+# Includes robust dump-channel fallback to BV510-A, matching the repaired
+# archived feature extraction that recovered all 850 files.
+rm(list=ls())
+source(file.path(Sys.getenv("SDY2583_REPO_ROOT",unset="."),"R","shared","reconstructed_panel_framework.R"))
+rp_install_and_load(c("dplyr","readr","stringr","tibble","purrr"),"flowCore")
+source(file.path(sd_repo_root(),"R","panels","CP26","MANIFEST_RECONSTRUCTED.R"))
+panel<-"CP26"; a<-sd_analysis_dir(panel); r<-file.path(a,"11_RData"); out<-file.path(a,"02_feature_extraction"); td<-file.path(a,"03_thresholds"); dir.create(out,recursive=TRUE,showWarnings=FALSE); dir.create(td,recursive=TRUE,showWarnings=FALSE)
+load(file.path(r,"SDY2583_CP26_STEP1_inventory_RECONSTRUCTED.RData")); th<-CP26_MANIFEST$thresholds
+readr::write_csv(tibble::tibble(marker=names(th),threshold=as.numeric(th)),file.path(td,"SDY2583_CP26_feature_extraction_thresholds_STEP2_RECONSTRUCTED.csv"))
+
+extract_one<-function(path,thresholds=th){
+ tryCatch({
+  obj<-rp_read_transform(path); map<-obj$marker_map; ex<-flowCore::exprs(obj$ff)
+  ch<-c(CD16=rp_find_channel(map,c("^CD16$"),"BV421-A"),DUMP=rp_find_channel(map,c("Viability.*CD3.*CD13.*CD19.*CD123","dump","viability"),"BV510-A"),NKG2A=rp_find_channel(map,c("NKG2A"),"BV605-A"),CD158=rp_find_channel(map,c("CD158"),"BV650-A"),NKG2C=rp_find_channel(map,c("NKG2C"),"BV711-A"),CD57=rp_find_channel(map,c("^CD57$"),"BV786-A"),CD45=rp_find_channel(map,c("^CD45$"),"BB515-A"),NKp44=rp_find_channel(map,c("NKp44"),"PerCP-Cy5-5-A"),CD161=rp_find_channel(map,c("CD161"),"PE-A"),CD56=rp_find_channel(map,c("^CD56$"),"PE-CF594-A"),CD107a=rp_find_channel(map,c("CD107a"),"PE-Cy5-A"),NKG2D=rp_find_channel(map,c("NKG2D"),"PE-Cy7-A"))
+  if(any(is.na(ch))) stop("Missing CP26 markers: ",paste(names(ch)[is.na(ch)],collapse=", "))
+  v<-lapply(ch,function(x)rp_vec(ex,x)); dump_low<-v$DUMP<=thresholds["DUMP_LOW"]; cd45_dump<-dump_low & v$CD45>thresholds["CD45"]
+  cd56<-v$CD56>thresholds["CD56"]; cd56h<-v$CD56>thresholds["CD56_HIGH"]; cd16<-v$CD16>thresholds["CD16"]; cd16h<-v$CD16>thresholds["CD16_HIGH"]
+  nk<-cd45_dump & (cd56|cd16); cd56_nk<-nk&cd56; cd16_nk<-nk&cd16; dp<-nk&cd56&cd16; cd56only<-nk&cd56&!cd16; cd16only<-nk&!cd56&cd16; bright<-nk&cd56h&!cd16; mature<-nk&cd56&cd16h
+  nkg2a<-v$NKG2A>thresholds["NKG2A"]; nkg2c<-v$NKG2C>thresholds["NKG2C"]; nkg2d<-v$NKG2D>thresholds["NKG2D"]; cd158<-v$CD158>thresholds["CD158"]; cd57<-v$CD57>thresholds["CD57"]; nkp44<-v$NKp44>thresholds["NKp44"]; cd161<-v$CD161>thresholds["CD161"]; cd107a<-v$CD107a>thresholds["CD107a"]
+  tibble::tibble(
+   result_file_name=basename(path),subject_id=rp_extract_subject_id(path),feature_ok=TRUE,feature_failed=FALSE,error_message=NA_character_,total_events=nrow(ex),n_dump_low=rp_n(dump_low),n_cd45_dump_low=rp_n(cd45_dump),n_nk_like=rp_n(nk),n_cd56pos_nk_like=rp_n(cd56_nk),n_cd16pos_nk_like=rp_n(cd16_nk),n_cd56_cd16_double_pos=rp_n(dp),n_cd56_only_nk_like=rp_n(cd56only),n_cd16_only_nk_like=rp_n(cd16only),n_cd56bright_like=rp_n(bright),n_cd56pos_cd16high_like=rp_n(mature),
+   pct_dump_low_total=rp_pct(dump_low),pct_cd45_dump_low_total=rp_pct(cd45_dump),pct_nk_like_total=rp_pct(nk),pct_nk_like_within_cd45_dump_low=rp_pct(nk,cd45_dump),pct_cd56pos_nk_like_total=rp_pct(cd56_nk),pct_cd16pos_nk_like_total=rp_pct(cd16_nk),pct_cd56_cd16_double_pos_total=rp_pct(dp),pct_cd56_only_nk_like_total=rp_pct(cd56only),pct_cd16_only_nk_like_total=rp_pct(cd16only),pct_cd56bright_like_total=rp_pct(bright),pct_cd56pos_cd16high_like_total=rp_pct(mature),
+   pct_cd56pos_within_nk_like=rp_pct(cd56,nk),pct_cd16pos_within_nk_like=rp_pct(cd16,nk),pct_cd56_cd16_double_pos_within_nk_like=rp_pct(cd56&cd16,nk),pct_cd56_only_within_nk_like=rp_pct(cd56&!cd16,nk),pct_cd16_only_within_nk_like=rp_pct(!cd56&cd16,nk),pct_cd56bright_like_within_nk_like=rp_pct(cd56h&!cd16,nk),pct_cd56pos_cd16high_like_within_nk_like=rp_pct(cd56&cd16h,nk),
+   pct_nkg2a_pos_within_nk_like=rp_pct(nkg2a,nk),pct_nkg2c_pos_within_nk_like=rp_pct(nkg2c,nk),pct_nkg2d_pos_within_nk_like=rp_pct(nkg2d,nk),pct_cd158_pos_within_nk_like=rp_pct(cd158,nk),pct_cd57_pos_within_nk_like=rp_pct(cd57,nk),pct_nkp44_pos_within_nk_like=rp_pct(nkp44,nk),pct_cd161_pos_within_nk_like=rp_pct(cd161,nk),pct_cd107a_pos_within_nk_like=rp_pct(cd107a,nk),
+   pct_nkg2a_nkg2c_double_pos_within_nk_like=rp_pct(nkg2a&nkg2c,nk),pct_nkg2a_nkg2c_double_neg_within_nk_like=rp_pct(!nkg2a&!nkg2c,nk),pct_nkg2c_cd57_pos_within_nk_like=rp_pct(nkg2c&cd57,nk),pct_nkg2a_cd57_pos_within_nk_like=rp_pct(nkg2a&cd57,nk),pct_cd158_cd57_pos_within_nk_like=rp_pct(cd158&cd57,nk),pct_nkg2d_cd107a_pos_within_nk_like=rp_pct(nkg2d&cd107a,nk),pct_cd57_cd107a_pos_within_nk_like=rp_pct(cd57&cd107a,nk),
+   pct_cd57_pos_within_cd56pos_cd16high_like=rp_pct(cd57,mature),pct_nkg2c_pos_within_cd56pos_cd16high_like=rp_pct(nkg2c,mature),pct_nkg2a_pos_within_cd56bright_like=rp_pct(nkg2a,bright),pct_cd107a_pos_within_cd56pos_cd16high_like=rp_pct(cd107a,mature),
+   median_CD56_in_nk_like=rp_median(v$CD56[nk]),median_CD16_in_nk_like=rp_median(v$CD16[nk]),median_NKG2A_in_nk_like=rp_median(v$NKG2A[nk]),median_NKG2C_in_nk_like=rp_median(v$NKG2C[nk]),median_NKG2D_in_nk_like=rp_median(v$NKG2D[nk]),median_CD158_in_nk_like=rp_median(v$CD158[nk]),median_CD57_in_nk_like=rp_median(v$CD57[nk]),median_NKp44_in_nk_like=rp_median(v$NKp44[nk]),median_CD161_in_nk_like=rp_median(v$CD161[nk]),median_CD107a_in_nk_like=rp_median(v$CD107a[nk]))
+ },error=function(e)tibble::tibble(result_file_name=basename(path),subject_id=rp_extract_subject_id(path),feature_ok=FALSE,feature_failed=TRUE,error_message=conditionMessage(e),total_events=NA_integer_,n_dump_low=NA_integer_,n_cd45_dump_low=NA_integer_,n_nk_like=NA_integer_))
+}
+feature_table<-purrr::map_dfr(fcs_files,extract_one)
+summary<-tibble::tibble(n_files=nrow(feature_table),n_subjects=dplyr::n_distinct(feature_table$subject_id),n_success=sum(feature_table$feature_ok),n_failed=sum(feature_table$feature_failed),median_total_events=median(feature_table$total_events,na.rm=TRUE),min_total_events=min(feature_table$total_events,na.rm=TRUE),max_total_events=max(feature_table$total_events,na.rm=TRUE),median_cd45_dump_low_events=median(feature_table$n_cd45_dump_low,na.rm=TRUE),median_nk_like_events=median(feature_table$n_nk_like,na.rm=TRUE))
+readr::write_csv(feature_table,file.path(out,"SDY2583_CP26_FULL_850_feature_table_STEP2_NK_panel_RECONSTRUCTED.csv")); readr::write_csv(summary,file.path(out,"SDY2583_CP26_feature_extraction_summary_STEP2_NK_panel_RECONSTRUCTED.csv")); save(feature_table,summary,th,extract_one,file=file.path(r,"SDY2583_CP26_STEP2_feature_extraction_RECONSTRUCTED.RData")); print(summary)

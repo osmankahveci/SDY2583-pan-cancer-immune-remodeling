@@ -1,0 +1,12 @@
+# CP10 Step 1B reconstructed mismatch diagnostic.
+rm(list=ls())
+source(file.path(Sys.getenv("SDY2583_REPO_ROOT",unset="."),"R","shared","bootstrap.R"))
+for(p in c("dplyr","readr","tibble"))if(!requireNamespace(p,quietly=TRUE))install.packages(p)
+suppressPackageStartupMessages({library(dplyr);library(readr);library(tibble)})
+a<-sd_analysis_dir("CP10"); r<-file.path(a,"11_RData"); out<-file.path(a,"01B_mismatch_diagnostic"); dir.create(out,recursive=TRUE,showWarnings=FALSE)
+load(file.path(r,"SDY2583_CP10_STEP1_fcs_inventory_marker_QC.RData"))
+mismatch_files<-fcs_inventory |> dplyr::filter(read_ok & (channel_order_mismatch|marker_order_mismatch|marker_set_mismatch))
+failed_files<-fcs_inventory |> dplyr::filter(!read_ok)
+pattern_summary<-fcs_inventory |> dplyr::filter(read_ok) |> dplyr::count(channel_signature,marker_signature,name="n_files") |> dplyr::arrange(dplyr::desc(n_files))
+readr::write_csv(mismatch_files,file.path(out,"SDY2583_CP10_mismatch_files_RECONSTRUCTED.csv"));readr::write_csv(failed_files,file.path(out,"SDY2583_CP10_failed_files_RECONSTRUCTED.csv"));readr::write_csv(pattern_summary,file.path(out,"SDY2583_CP10_channel_marker_patterns_RECONSTRUCTED.csv"))
+save(mismatch_files,failed_files,pattern_summary,file=file.path(r,"SDY2583_CP10_STEP1B_mismatch_diagnostic.RData"));cat("CP10 mismatch files:",nrow(mismatch_files),"failed:",nrow(failed_files),"\n")

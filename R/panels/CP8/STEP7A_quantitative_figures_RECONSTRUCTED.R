@@ -1,0 +1,13 @@
+# CP8 Step 7A reconstructed quantitative figures.
+rm(list=ls())
+source(file.path(Sys.getenv("SDY2583_REPO_ROOT",unset="."),"R","shared","figure_framework.R"))
+rp_install_and_load(c("dplyr","readr","tidyr","ggplot2","patchwork","stringr"))
+source(file.path(sd_repo_root(),"R","panels","CP8","MANIFEST_RECONSTRUCTED.R"))
+analysis_dir<-sd_analysis_dir("CP8"); rdata_dir<-file.path(analysis_dir,"11_RData"); out_dir<-file.path(analysis_dir,"09_main_figures"); dir.create(out_dir,recursive=TRUE,showWarnings=FALSE)
+load(file.path(rdata_dir,"SDY2583_CP8_STEP4_composite_scores_RECONSTRUCTED.RData")); load(file.path(rdata_dir,"SDY2583_CP8_STEP3B_statistics_RECONSTRUCTED.RData"))
+rp_quantitative_figure(scored_data,c("pct_cd3_pos_total","pct_cd4_pos_total","pct_cd3_cd4_pos_total","pct_cd4_within_cd3"),main_statistics,file.path(out_dir,"Figure1_CP8_CD4_composition_RECONSTRUCTED.pdf"))
+rp_quantitative_figure(scored_data,c("pct_naive_like","pct_memory_like","pct_tem_like","median_CD62L_in_CD3CD4"),main_statistics,file.path(out_dir,"Figure2_CP8_CD4_differentiation_RECONSTRUCTED.pdf"))
+rp_quantitative_figure(scored_data,c("pct_il7ra_low","pct_cd25_high","pct_cd25pos_il7ralow_treg_like","pct_cd25high_il7ralow_treg_enriched","pct_ccr4_cd25pos_il7ralow"),main_statistics,file.path(out_dir,"Figure3_CP8_regulatory_like_RECONSTRUCTED.pdf"))
+rp_quantitative_figure(scored_data,c("pct_ccr6_pos","pct_ccr4_pos","pct_ccr4pos_ccr6pos","pct_cxcr5_pos"),main_statistics,file.path(out_dir,"Figure4_CP8_helper_Tfh_axis_RECONSTRUCTED.pdf"))
+score_stats<-score_statistics |> dplyr::rename(feature=score)
+rp_quantitative_figure(scored_data,c(CP8_MANIFEST$integrated_score,names(CP8_MANIFEST$score_definitions)),score_stats,file.path(out_dir,"Figure5_CP8_composite_scores_RECONSTRUCTED.pdf"),ncol=2)
