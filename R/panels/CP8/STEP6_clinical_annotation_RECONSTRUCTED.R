@@ -1,0 +1,10 @@
+# CP8 Step 6 reconstructed clinical/cancer-subgroup annotation.
+rm(list=ls())
+source(file.path(Sys.getenv("SDY2583_REPO_ROOT",unset="."),"R","shared","clinical_annotation_framework.R"))
+rp_install_and_load(c("dplyr","readr","stringr","tibble","purrr"))
+source(file.path(sd_repo_root(),"R","panels","CP8","MANIFEST_RECONSTRUCTED.R"))
+analysis_dir<-sd_analysis_dir("CP8"); rdata_dir<-file.path(analysis_dir,"11_RData")
+load(file.path(rdata_dir,"SDY2583_CP8_STEP4_composite_scores_RECONSTRUCTED.RData"))
+outcomes<-unique(c(CP8_MANIFEST$integrated_score,names(CP8_MANIFEST$score_definitions),CP8_MANIFEST$targeted_outcomes))
+clinical_result<-rp_run_clinical_annotation("CP8",scored_data,outcomes,min_group=15)
+save(clinical_result,outcomes,file=file.path(rdata_dir,"SDY2583_CP8_STEP6_clinical_annotation_RECONSTRUCTED.RData"))
