@@ -7,9 +7,24 @@ phenotypes, robustness analyses, clinical annotation, and figure generation.
 
 ## Release status
 
-This is a provenance-tracked working reproducibility release. Raw FCS files,
+This is a provenance-tracked all-panel reproducibility release. Raw FCS files,
 participant-level metadata and matrices, serialized workspaces, and generated
 outputs are excluded from Git.
+
+All ten manuscript panels have completed independent downstream archive
+validation from archived participant-level feature, metadata, score, matching,
+interaction, and threshold-sensitivity tables. Numerical agreement is at
+floating-point/machine-precision scale, with exact subject-pair reproduction
+where archived matching tables were available.
+
+A fresh raw-FCS end-to-end rerun was not performed. FCS inventory,
+compensation, fixed-logicle transformation, threshold gating, and regeneration
+of participant-level feature tables are explicitly outside the accepted
+validation scope of this release.
+
+Accurate release description:
+
+> Provenance-tracked all-panel reproducibility release with all ten panel downstream analyses independently archive-validated. Raw-FCS end-to-end re-execution was not performed and is outside the accepted validation scope of this release.
 
 Two source classes are kept separate:
 
@@ -19,25 +34,27 @@ Two source classes are kept separate:
   using archived thresholds, marker maps, feature schemas, composite
   definitions, Methods/Results records, and numerical output tables.
 
-Reconstructed code remains provisional until it executes locally and passes
-archived-output validation. Do not remove the provenance suffixes.
+Do not remove the provenance suffixes. See [VALIDATION_STATUS.md](VALIDATION_STATUS.md)
+and [validation/ALL_PANEL_DOWNSTREAM_VALIDATION_SUMMARY.md](validation/ALL_PANEL_DOWNSTREAM_VALIDATION_SUMMARY.md)
+for the accepted validation boundary and panel-level evidence.
 
 ## Panel coverage
 
 | Panel | Included source | Status |
 |---|---|---|
-| CP7 | Reconstructed Steps 1–7B | Full provisional pipeline, runner, validator. |
-| CP8 | Reconstructed Steps 1–7B | Full provisional pipeline, runner, validator. |
-| CP10 | Reconstructed Steps 1/1B + recovered Steps 2–8 | End-to-end sequence assembled. |
-| CP16 | Recovered Steps 1–7B | Complete recovered sequence and runner. |
-| CP22 | Recovered Steps 1–7B | Complete recovered sequence and runner. |
-| CP23 | Recovered Steps 1–7B, including Step 6B | Complete recovered sequence and runner. |
-| CP24 | Recovered pilot codebook + reconstructed full-cohort Steps 1–7B | Pilot and 850-subject analysis kept separate. |
-| CP25 | Reconstructed Steps 1–7B | Full provisional pipeline, runner, validator. |
-| CP26 | Reconstructed Steps 1–7B | Includes BV510-A dump fallback for annotation-variant files. |
-| CP28 | Reconstructed Steps 1–7B | Full provisional T/NK-interface pipeline. |
+| CP7 | Reconstructed Steps 1–7B | Downstream archive-validated after score, matching, model, and threshold-family corrections. |
+| CP8 | Reconstructed Steps 1–7B | Downstream archive-validated after matching, age-family, FDR, and threshold-family corrections. |
+| CP10 | Reconstructed Steps 1/1B + recovered Steps 2–8 | Downstream archive-validated; recovered downstream algorithms retained. |
+| CP16 | Recovered Steps 1–7B | Downstream archive-validated; recovered sequence retained. |
+| CP22 | Recovered Steps 1–7B | Downstream archive-validated; recovered sequence retained. |
+| CP23 | Recovered Steps 1–7B, including Step 6B | Downstream archive-validated; recovered sequence retained. |
+| CP24 | Recovered pilot codebook + reconstructed full-cohort Steps 1–7B | Downstream archive-validated after outcome-family, PD-1, model-count, and hierarchical-score corrections. |
+| CP25 | Reconstructed Steps 1–7B | Downstream archive-validated after age-family, matching, interaction, and exact threshold-family corrections. |
+| CP26 | Reconstructed Steps 1–7B | Downstream archive-validated after score-universe and integrated-score corrections; includes BV510-A dump fallback. |
+| CP28 | Reconstructed Steps 1–7B | Downstream archive-validated after duplicate-module, event-QC, age-family, matching, and threshold-family corrections. |
 
-See [PROVENANCE.md](PROVENANCE.md) for panel-level evidence and limitations.
+See [PROVENANCE.md](PROVENANCE.md) for panel-level source evidence and
+limitations.
 
 ## Data access
 
@@ -57,9 +74,10 @@ scripts/
   01_run_all_panels.R
   02_static_source_audit.R
   10-19 panel runners
-  20-26 panel validators
+  20-28 panel validators
   30_validate_all_panels.R
   99_session_info.R
+validation/            # panel-level archive-validation evidence
 ```
 
 ## Setup
@@ -127,19 +145,18 @@ the recovered pilot/QC codebook remains available separately.
 
 ## Validation
 
-Reconstructed-panel validators check fixed non-sensitive archive benchmarks,
-including file counts, successful extractions, event-count summaries, 832
-valid-age records where applicable, feature/score counts, selected adjusted
-coefficients, matching counts, robustness classifications, and required
-figures.
+Panel-specific validators check fixed non-sensitive archive benchmarks,
+including file counts where available, participant-table dimensions,
+feature/score counts, selected adjusted coefficients, matching counts,
+robustness classifications, and required outputs.
 
-When `SDY2583_<PANEL>_REFERENCE_DIR` is configured, generated CSVs are also
+When `SDY2583_<PANEL>_REFERENCE_DIR` is configured, generated CSVs can also be
 compared with archived tables by stable keys and numerical tolerance. Reports
 are written under `outputs/<PANEL>/validation/`.
 
-Recovered-panel runners use structural execution validation and optional local
-archive inventory checks. A panel should be called verified only after all
-required scripts execute and its validation report passes.
+The completed release validation reported here is downstream archive
+validation from archived participant-level tables. It does not claim a fresh
+raw-FCS-to-results execution.
 
 ## Static checks
 
@@ -159,8 +176,8 @@ The same audit runs through GitHub Actions in
 - Raw data and participant-level outputs are not committed.
 - `.RData`, `.rds`, FCS, local configuration, and outputs are ignored.
 - Recovered and reconstructed source remain visibly distinguished.
-- Session information and validation reports are retained locally as release
-  evidence.
+- Session information and validation reports can be retained locally as
+  additional execution evidence.
 - CP22 immunoglobulin-isotype scores represent B-cell isotype
   architecture/repatterning, not total IgG or total IgA abundance.
 
