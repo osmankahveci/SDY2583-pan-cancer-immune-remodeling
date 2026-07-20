@@ -48,3 +48,26 @@ All differences are at floating-point/machine-precision scale.
 - execute the corrected full CP7 R pipeline and retain its validation report plus session information.
 
 Until those FCS-level checks pass, CP7 is best described as **downstream archive-validated but raw-FCS validation pending**.
+
+## CP8 downstream archive validation — in progress, 2026-07-20
+
+### Completed layers
+
+The archived CP8 post-extraction participant table was used to independently refit the primary models with `outcome ~ disease_group + age_for_model + sex`, retaining all archived sex categories and complete-case model sets.
+
+| Layer | Archived rows | Result | Maximum absolute numerical difference |
+|---|---:|---|---:|
+| Primary age/sex-adjusted feature models | 44 | Pass | 2.69 × 10^-13 |
+| Composite-score adjusted models | 6 | Pass | 6.93 × 10^-14 for coefficient/t statistics; p-value differences below 1.53 × 10^-18 |
+
+The primary and composite model outputs therefore reproduce at floating-point/machine-precision scale.
+
+### Remaining CP8 validation
+
+- independently reconstruct and compare subject-level composite-score definitions;
+- validate age-stratified models, same-sex nearest-age matching, matched models, and disease-by-age interactions;
+- validate binary-sex, event-count, direction, and targeted threshold-sensitivity families;
+- inspect the reconstructed CP8 source for any archive-specific implementation differences and apply corrections;
+- execute raw-FCS extraction locally when the 850 FCS files are available.
+
+CP8 is not yet marked complete.
