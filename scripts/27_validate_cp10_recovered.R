@@ -94,8 +94,9 @@ if (nzchar(reference_dir) && dir.exists(reference_dir)) {
     file.path(a, "07_threshold_sensitivity", "SDY2583_CP10_threshold_model_results_STEP5.csv"), "SDY2583_CP10_threshold_model_results_STEP5.csv", "variable,threshold_set",
     file.path(a, "07_threshold_sensitivity", "SDY2583_CP10_threshold_robustness_summary_STEP5.csv"), "SDY2583_CP10_threshold_robustness_summary_STEP5.csv", "variable"
   )
+  all_reference_csv <- list.files(reference_dir, "\\.csv$", full.names = TRUE, recursive = TRUE, ignore.case = TRUE)
   archive_checks <- purrr::pmap_dfr(comparison_plan, function(generated, reference_name, keys) {
-    hit <- list.files(reference_dir, pattern = reference_name, full.names = TRUE, recursive = TRUE, fixed = TRUE)
+    hit <- all_reference_csv[basename(all_reference_csv) == reference_name]
     if (length(hit) == 0L) return(tibble::tibble(check = paste0("archive table: ", reference_name), observed = "reference missing", expected = "matched", pass = FALSE))
     cmp <- rp_compare_csv(generated, hit[1], strsplit(keys, ",", fixed = TRUE)[[1]], tolerance = tol)
     tibble::tibble(check = paste0("archive table: ", reference_name), observed = cmp$detail[1], expected = "matched", pass = cmp$pass[1])
