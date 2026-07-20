@@ -13,4 +13,4 @@ scripts<-c(
 "R/panels/CP10/STEP7A_main_figures_SAFE_v2.R",
 "R/panels/CP10/STEP7B_flowjo_style_representative_gating_REAL_FCS_SAFE_v2.R",
 "R/panels/CP10/STEP8_manuscript_export_SAFE.R")
-run_sdy2583_script_sequence("CP10",scripts,"scripts/25_validate_recovered_panels.R")
+run_sdy2583_script_sequence("CP10",scripts,"scripts/27_validate_cp10_recovered.R")
