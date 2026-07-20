@@ -9,6 +9,7 @@ steps<-c(
 "R/panels/CP7/STEP4_composite_scores_RECONSTRUCTED.R",
 "R/panels/CP7/STEP4B_age_sensitivity_caliper_interaction_RECONSTRUCTED.R",
 "R/panels/CP7/STEP5_threshold_sensitivity_TARGETED_RECONSTRUCTED.R",
+"R/panels/CP7/STEP5B_archive_target_family_FINAL_RECONSTRUCTED.R",
 "R/panels/CP7/STEP6_clinical_annotation_RECONSTRUCTED.R",
 "R/panels/CP7/STEP7A_quantitative_figures_RECONSTRUCTED.R",
 "R/panels/CP7/STEP7B_flowjo_style_representative_gating_RECONSTRUCTED.R")
