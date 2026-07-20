@@ -1,36 +1,19 @@
-# Install packages used by the recovered SDY2583 analysis scripts.
-# Package versions are intentionally not asserted because the original session
-# metadata were not preserved in the analysis archive.
-
+# Install packages used by the recovered and reconstructed SDY2583 workflows.
+# Exact versions are captured after execution with scripts/99_session_info.R.
 cran_packages <- c(
-  "broom",
-  "dplyr",
-  "forcats",
-  "ggplot2",
-  "patchwork",
-  "purrr",
-  "readr",
-  "rlang",
-  "scales",
-  "stringr",
-  "tibble",
-  "tidyr"
+  "broom", "dplyr", "forcats", "ggplot2", "patchwork", "purrr",
+  "readr", "rlang", "scales", "stringr", "tibble", "tidyr"
 )
-
 missing_cran <- cran_packages[
   !vapply(cran_packages, requireNamespace, logical(1), quietly = TRUE)
 ]
+if (length(missing_cran) > 0L) install.packages(missing_cran)
 
-if (length(missing_cran) > 0) {
-  install.packages(missing_cran)
+if (!requireNamespace("BiocManager", quietly = TRUE)) install.packages("BiocManager")
+bioc_packages <- c("flowCore")
+for (package in bioc_packages) {
+  if (!requireNamespace(package, quietly = TRUE)) {
+    BiocManager::install(package, ask = FALSE, update = FALSE)
+  }
 }
-
-if (!requireNamespace("BiocManager", quietly = TRUE)) {
-  install.packages("BiocManager")
-}
-
-if (!requireNamespace("flowCore", quietly = TRUE)) {
-  BiocManager::install("flowCore", ask = FALSE, update = FALSE)
-}
-
-message("Dependency check complete.")
+message("All-panel dependency check complete.")
