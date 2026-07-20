@@ -102,3 +102,57 @@ All numerical differences are at floating-point/machine-precision scale.
 - evaluate the reconstructed event-count sensitivity extension during the local run; no separate archived CP8 event-count result table was available for independent table-level comparison in this validation pass.
 
 CP8 is therefore **downstream archive-validated but raw-FCS validation pending**.
+
+## CP10 downstream archive validation — 2026-07-20
+
+### Scope
+
+The archived CP10 post-extraction participant table, feature-model outputs, composite definitions and scores, age-matched datasets, disease-by-age interaction results, and threshold-sensitivity tables were independently recalculated. Recovered `SAFE` Steps 2–5 were also inspected against the archive-specific algorithms. This validates the numerical downstream core but does **not** replace local execution of the reconstructed Step 1/1B and recovered Step 2 against the 850 raw FCS files.
+
+### Results
+
+| Layer | Archived rows | Result | Maximum absolute numerical difference |
+|---|---:|---|---:|
+| Primary age/sex-adjusted feature models | 37 | Pass | 2.65 × 10^-13 |
+| Binary-sex sensitivity feature models | 37 | Pass | 2.10 × 10^-13 |
+| CD45 event-QC sensitivity feature models | 37 | Pass | 1.39 × 10^-13 |
+| Technical mismatch-exclusion feature models | 37 | Pass | 1.28 × 10^-13 |
+| Subject-level composite scores | 850 subjects × 6 scores | Pass | 1.78 × 10^-15 |
+| Primary and sensitivity composite models | 24 | Pass | 8.22 × 10^-15 |
+| Same-sex nearest-age subject matching | 265 five-year pairs; 273 ten-year pairs | Exact pair match | 0 |
+| Age/sex-adjusted matched composite models | 12 | Pass | 5.00 × 10^-15 |
+| Disease-by-age interaction models | 6 | Pass | 1.64 × 10^-14 |
+| Threshold-set subject-level scores | 2,550 rows × 6 scores | Pass | 2.66 × 10^-15 |
+| Targeted threshold-sensitivity models | 99 | Pass | 2.65 × 10^-13 |
+| Threshold robustness summary | 33 variables | Exact classification match | 0 |
+
+All numerical differences are at floating-point/machine-precision scale.
+
+### Archive-specific rules confirmed
+
+1. CP10 tests an exact **37-feature** family under the primary model and three prespecified sensitivities: binary sex, `n_cd45_viable >= 1000`, and exclusion of the two channel/marker-mismatch files.
+2. All 37 feature directions are preserved across the four model sets; global FDR remains below 0.05 for 28 features in all sets.
+3. Six phenotype-oriented composite scores are standardized across all **850 post-extraction subjects**. Five are significantly higher in cancer; the CCR3/eosinophil-like composite is not significant in the primary model.
+4. The integrated myeloid/granulocytic remodeling score has an archived adjusted beta of **0.4893007219212893**.
+5. Same-sex age matching sorts healthy and cancer subjects by sex, ascending age, and subject ID, then greedily selects the nearest unused control with lower-age-first and subject-ID tie resolution. The exact archived 265/273 pairs were reproduced.
+6. Matched inference remains age/sex adjusted with `score ~ disease_group + age_for_model + sex`; it is not a pair-fixed-effect model.
+7. Disease-by-age interaction models are restricted to the six composite scores and fit `score ~ disease_group * age_z + sex` in the 832-subject model-ready set.
+8. Threshold sensitivity uses **33 variables**: 27 constituent/targeted features and six composites. BH FDR is calculated separately within each main, permissive, and stringent 33-variable set.
+9. Threshold robustness classification is exactly reproduced: 29 variables preserve direction and global FDR, three preserve direction without FDR across all sets, and one does not preserve direction.
+10. CP10 labels remain phenotype-based. The code does not convert granulocyte-like, eosinophil-like, APC-like, or monocyte-like flow phenotypes into definitive cell-identity claims.
+
+### Repository changes made during validation
+
+- added `scripts/27_validate_cp10_recovered.R`, a CP10-specific fixed-benchmark and optional archive-table validation gate;
+- changed the CP10 runner to invoke the panel-specific validator rather than the generic recovered-panel structural validator;
+- configured the validator to compare feature, model, subject-level composite, exact matching, interaction, and threshold tables when `SDY2583_CP10_REFERENCE_DIR` is provided;
+- retained recovered Steps 2–5 unchanged because their downstream algorithms already reproduce the archive exactly.
+
+### Remaining CP10 validation
+
+- execute the reconstructed Step 1/1B and recovered Step 2 on the local 850 CP10 FCS files;
+- compare the regenerated inventory, marker/channel mismatch, compensation/transformation, gating, and feature tables with the archived outputs;
+- run the complete CP10 pipeline with `SDY2583_CP10_REFERENCE_DIR` configured and retain the panel-specific validation report and session information;
+- separately inspect optional clinical-annotation and cancer-subtype outputs where the necessary clinical source tables are available.
+
+CP10 is therefore **downstream archive-validated but raw-FCS and optional clinical-extension validation pending**.
