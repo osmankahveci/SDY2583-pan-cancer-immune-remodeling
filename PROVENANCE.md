@@ -20,7 +20,7 @@ were not intentionally rewritten.
 Recovered: feature extraction (Step 2), metadata/age QC (Step 3A), adjusted
 statistics (Step 3B), composite scores (Step 4), age sensitivity (Step 4B),
 threshold sensitivity (Step 5), clinical annotation (Step 6), and figure
-generation (Steps 7A–7B).
+generation (Steps 7A–7B), plus the manuscript-export step (Step 8).
 
 Not located: Step 1 FCS inventory/QC and Step 1B mismatch-diagnostic source.
 
@@ -30,9 +30,9 @@ Recovered: Steps 1, 1B, 2, 3A, 3B, 4, 4B, 5, 6, 7A, and 7B.
 
 ### CP22
 
-Recovered: Steps 1B, 2, 3A, 3B, 4, 4B, 5, 6, 7A, and 7B.
-
-Not located: Step 1 FCS inventory/QC source.
+Recovered: Steps 1, 1B, 2, 3A, 3B, 4, 4B, 5, 6, 7A, and 7B. Step 1 was
+stored directly in the panel's `FULL_850_ANALYSIS` root rather than its
+script subfolder and was recovered during the recursive archive audit.
 
 ### CP23
 
@@ -49,10 +49,13 @@ must not be cited as the complete CP24 production pipeline.
 
 ### CP7, CP8, CP25, CP26, and CP28
 
-No `.R` source scripts were located in the inspected Drive analysis folders.
-Output artifacts and/or serialized objects were present, but they are not a
-substitute for source code and are not used here to reconstruct an unverified
-pipeline.
+No `.R`, `.Rmd`, or `.qmd` source scripts were visible in the recursively
+inspected Drive `FULL_850_ANALYSIS` folder trees. Output artifacts and/or
+serialized objects were present, but they are not a substitute for source
+code and are not used here to reconstruct an unverified pipeline. This
+statement describes the current Drive archive layout; it does not imply that
+the analyses were performed without source code or that source files do not
+exist in another archive or local analysis environment.
 
 ### Cross-panel clinical integration
 
