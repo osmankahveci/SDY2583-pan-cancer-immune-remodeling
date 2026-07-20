@@ -13,4 +13,4 @@ scripts<-c(
 "R/panels/CP23/STEP6B_time_from_start_repair_SAFE.R",
 "R/panels/CP23/STEP7A_PATCH_age_threshold_figures_SAFE.R",
 "R/panels/CP23/STEP7B_flowjo_style_representative_gating_SAFE.R")
-run_sdy2583_script_sequence("CP23",scripts,"scripts/25_validate_recovered_panels.R")
+run_sdy2583_script_sequence("CP23",scripts,"scripts/31_validate_cp23_recovered.R")
