@@ -49,25 +49,56 @@ All differences are at floating-point/machine-precision scale.
 
 Until those FCS-level checks pass, CP7 is best described as **downstream archive-validated but raw-FCS validation pending**.
 
-## CP8 downstream archive validation — in progress, 2026-07-20
+## CP8 downstream archive validation — 2026-07-20
 
-### Completed layers
+### Scope
 
-The archived CP8 post-extraction participant table was used to independently refit the primary models with `outcome ~ disease_group + age_for_model + sex`, retaining all archived sex categories and complete-case model sets.
+The archived CP8 post-extraction participant, score, binary-sex, age-sensitivity, matching, interaction, and threshold-sensitivity CSV tables were independently recalculated outside the reconstructed R pipeline. As for CP7, this establishes downstream reproducibility from archived participant-level tables but does **not** replace pending raw-FCS execution of inventory, compensation, transformation, gating, and feature extraction.
+
+### Results
 
 | Layer | Archived rows | Result | Maximum absolute numerical difference |
 |---|---:|---|---:|
 | Primary age/sex-adjusted feature models | 44 | Pass | 2.69 × 10^-13 |
-| Composite-score adjusted models | 6 | Pass | 6.93 × 10^-14 for coefficient/t statistics; p-value differences below 1.53 × 10^-18 |
+| Subject-level component and integrated scores | 850 subjects × 6 scores | Pass | 1.16 × 10^-14 |
+| Composite-score adjusted models | 6 | Pass | 6.93 × 10^-14 |
+| Binary-sex sensitivity feature models | 44 | Pass | 1.05 × 10^-13 |
+| Age-stratified adjusted models | 93 | Pass | 7.46 × 10^-14 |
+| Same-sex nearest-age subject matching | 265 five-year pairs; 273 ten-year pairs | Exact pair match | 0 |
+| Age/sex-adjusted matched models | 62 | Pass | 4.91 × 10^-13 |
+| Disease-by-age interaction models | 31 | Pass | 2.49 × 10^-14 |
+| Threshold-set subject-level scores | 2,550 rows × 6 scores | Pass | 1.16 × 10^-14 |
+| Targeted threshold-sensitivity models | 84 | Pass | 2.08 × 10^-13 |
+| Threshold robustness summary | 28 outcomes | Pass: direction and FDR preserved for all 28 | Exact classification match |
 
-The primary and composite model outputs therefore reproduce at floating-point/machine-precision scale.
+All numerical differences are at floating-point/machine-precision scale.
+
+### Archive-specific rules confirmed
+
+1. CP8 component and integrated scores are standardized across **all 850 post-extraction subjects**. This differs from the CP7 primary-score rule.
+2. Age-stratified, matched, and interaction analyses use an exact **31-outcome** family.
+3. Age-stratum BH FDR is calculated separately within Young <40, Middle 40–59, and Older 60+.
+4. Same-sex nearest-age matching sorts cancer and healthy subjects by sex, ascending age, and subject ID. When two controls have the same age distance, the first control in ascending-age order is selected; this reproduces the archived lower-age-first tie rule.
+5. Matched CP8 inference uses `outcome ~ disease_group + age_for_model + sex`; it is not a matched-pair fixed-effect model.
+6. Disease-by-age interaction models use age standardized over the complete valid-age CP8 set and fit `outcome ~ disease_group * age_z + sex`.
+7. Threshold sensitivity uses an exact **28-outcome** family. Positive-marker thresholds use −0.2/+0.2 permissive/stringent shifts, whereas the IL7RA-low gate uses the reversed +0.2/−0.2 rule.
+8. Threshold-set component and integrated scores are standardized independently within each all-850 permissive, main, and stringent extraction. BH FDR is calculated separately within each 28-outcome threshold set.
+
+### Corrections applied to reconstructed CP8 source
+
+- added explicit archived 31-outcome age-sensitivity and 28-outcome threshold-sensitivity families to the panel manifest;
+- corrected same-sex nearest-age tie handling from subject-ID-first to lower-age-first selection, reproducing the exact 265/273 archived pairs;
+- changed age-stratum FDR from a pooled 93-test adjustment to separate 31-test adjustments within each age group;
+- retained the archive-correct age/sex-adjusted matched model rather than applying CP7’s pair-fixed-effect rule;
+- corrected Step 5 to load the Step 1 FCS inventory before using `fcs_files`;
+- expanded threshold outputs to include the full data-with-metadata, scored-data, 28-outcome statistics, and robustness tables;
+- expanded the CP8 validator to cover subject-level scores, binary-sex models, age strata, exact pairs, matched models, interactions, and threshold outputs;
+- corrected the fixed main-feature benchmark from 45 to the archived 44 modeled features.
 
 ### Remaining CP8 validation
 
-- independently reconstruct and compare subject-level composite-score definitions;
-- validate age-stratified models, same-sex nearest-age matching, matched models, and disease-by-age interactions;
-- validate binary-sex, event-count, direction, and targeted threshold-sensitivity families;
-- inspect the reconstructed CP8 source for any archive-specific implementation differences and apply corrections;
-- execute raw-FCS extraction locally when the 850 FCS files are available.
+- execute Steps 1–2 on the local 850 CP8 FCS files and compare the generated feature table and QC summaries with the archive;
+- execute the corrected full CP8 R pipeline with `SDY2583_CP8_REFERENCE_DIR` configured and retain its validation report plus session information;
+- evaluate the reconstructed event-count sensitivity extension during the local run; no separate archived CP8 event-count result table was available for independent table-level comparison in this validation pass.
 
-CP8 is not yet marked complete.
+CP8 is therefore **downstream archive-validated but raw-FCS validation pending**.
