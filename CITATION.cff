@@ -1,6 +1,6 @@
 cff-version: 1.2.0
-message: "If you use this software, please cite the repository, the ImmPort SDY2583 dataset, and the primary study."
-title: "SDY2583 pan-cancer immune remodeling: multi-panel flow-cytometry reanalysis code"
+message: "If you use this software, cite the repository, the ImmPort SDY2583 dataset, and the associated manuscript."
+title: "SDY2583 pan-cancer immune remodeling: multi-panel flow-cytometry reproducibility code"
 type: software
 authors:
   - family-names: "Kahveci"
@@ -8,7 +8,7 @@ authors:
 repository-code: "https://github.com/osmankahveci/SDY2583-pan-cancer-immune-remodeling"
 url: "https://github.com/osmankahveci/SDY2583-pan-cancer-immune-remodeling"
 license: MIT
-version: 0.1.0
+version: "0.1.0-working-release"
 date-released: 2026-07-20
 keywords:
   - flow cytometry
@@ -16,6 +16,8 @@ keywords:
   - pan-cancer
   - immune remodeling
   - ImmPort
+  - SDY2583
+  - reproducibility
 identifiers:
   - type: doi
     value: "10.21430/M3A0B9RD5T"
