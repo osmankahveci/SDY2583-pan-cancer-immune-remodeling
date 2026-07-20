@@ -1,0 +1,14 @@
+# Master SDY2583 reproducibility orchestrator.
+# Example:
+#   Rscript scripts/01_run_all_panels.R
+#   SDY2583_PANELS=CP7,CP8,CP25 Rscript scripts/01_run_all_panels.R
+root<-normalizePath(path.expand(Sys.getenv("SDY2583_REPO_ROOT",unset=getwd())),mustWork=FALSE);Sys.setenv(SDY2583_REPO_ROOT=root);if(file.exists(file.path(root,"config","paths.R")))source(file.path(root,"config","paths.R"))
+selected<-toupper(trimws(unlist(strsplit(Sys.getenv("SDY2583_PANELS",unset="CP7,CP8,CP10,CP16,CP22,CP23,CP24,CP25,CP26,CP28"),","))));continue_on_error<-tolower(Sys.getenv("SDY2583_CONTINUE_ON_ERROR",unset="false"))%in%c("true","1","yes")
+# Build the shared metadata matrix first unless an explicit compatible matrix exists.
+metadata_file<-path.expand(Sys.getenv("SDY2583_METADATA_MATRIX_FILE",unset=""));if(!nzchar(metadata_file)||!file.exists(metadata_file)){source(file.path(root,"R","integration","STEP0_build_subject_metadata_matrix_RECONSTRUCTED.R"),local=new.env(parent=globalenv()));metadata_file<-file.path(root,"data","derived","metadata","SDY2583_subject_FCS_metadata_matrix_RECONSTRUCTED.csv");Sys.setenv(SDY2583_METADATA_MATRIX_FILE=metadata_file)}
+runners<-c(CP7="scripts/10_run_cp7_reconstructed.R",CP8="scripts/11_run_cp8_reconstructed.R",CP25="scripts/12_run_cp25_reconstructed.R",CP26="scripts/13_run_cp26_reconstructed.R",CP28="scripts/14_run_cp28_reconstructed.R",CP10="scripts/15_run_cp10_pipeline.R",CP16="scripts/16_run_cp16_recovered.R",CP22="scripts/17_run_cp22_recovered.R",CP23="scripts/18_run_cp23_recovered.R",CP24="scripts/19_run_cp24_full_reconstructed.R")
+unknown<-setdiff(selected,names(runners));if(length(unknown))stop("Unknown panel(s): ",paste(unknown,collapse=", "))
+status<-data.frame(panel=character(),status=character(),message=character(),stringsAsFactors=FALSE)
+for(panel in selected){cat("\n################################################################\nRUNNING ",panel,"\n################################################################\n",sep="");res<-tryCatch({source(file.path(root,runners[[panel]]),local=new.env(parent=globalenv()));list(ok=TRUE,message="completed")},error=function(e)list(ok=FALSE,message=conditionMessage(e)));status<-rbind(status,data.frame(panel=panel,status=ifelse(res$ok,"completed","failed"),message=res$message));if(!res$ok&&!continue_on_error)break}
+out<-file.path(root,"outputs","validation");dir.create(out,recursive=TRUE,showWarnings=FALSE);utils::write.csv(status,file.path(out,"SDY2583_all_panel_execution_status.csv"),row.names=FALSE)
+if(all(status$status=="completed")){source(file.path(root,"R","integration","STEP1_build_cross_panel_score_matrix_RECONSTRUCTED.R"),local=new.env(parent=globalenv()));source(file.path(root,"scripts","30_validate_all_panels.R"),local=new.env(parent=globalenv()))}else stop("One or more panel pipelines failed. See outputs/validation/SDY2583_all_panel_execution_status.csv")
