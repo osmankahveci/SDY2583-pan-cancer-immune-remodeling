@@ -12,4 +12,4 @@ scripts<-c(
 "R/panels/CP16/STEP6_clinical_annotation_SAFE.R",
 "R/panels/CP16/STEP7A_quantitative_figures_SAFE.R",
 "R/panels/CP16/STEP7B_flowjo_style_representative_gating_SAFE.R")
-run_sdy2583_script_sequence("CP16",scripts,"scripts/25_validate_recovered_panels.R")
+run_sdy2583_script_sequence("CP16",scripts,"scripts/28_validate_cp16_recovered.R")
