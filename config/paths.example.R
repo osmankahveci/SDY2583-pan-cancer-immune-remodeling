@@ -11,6 +11,11 @@ Sys.setenv(
   SDY2583_METADATA_MATRIX_FILE = "/path/to/SDY2583_subject_FCS_metadata_matrix.csv",
   # Optional local cancer-subgroup/therapy annotation matrix.
   SDY2583_CLINICAL_ANNOTATION_FILE = "/path/to/SDY2583_clinical_annotation.csv",
+  # Cross-panel convergence input/output. The input should be the subject-level
+  # ALL10 matrix, for example ALL10_with_CP23.csv.
+  SDY2583_CROSS_PANEL_MATRIX_FILE = "/path/to/SDY2583_integrated_clinical_immune_score_matrix_ALL10_with_CP23.csv",
+  SDY2583_CROSS_PANEL_OUT_DIR = "/path/to/derived/clinical_integration/09_cross_panel_convergence",
+  SDY2583_CROSS_PANEL_MIN_N = "50",
 
   SDY2583_CP7_FCS_DIR = "/path/to/CP7/fcs",
   SDY2583_CP8_FCS_DIR = "/path/to/CP8/fcs",
