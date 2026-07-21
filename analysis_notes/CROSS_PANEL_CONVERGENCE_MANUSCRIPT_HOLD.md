@@ -2,6 +2,8 @@
 
 Status: **retain for later integration after all planned additional analyses are complete.**
 
+Figure strategy: **do not generate or finalize figures until every additional analysis is complete. The final manuscript should receive one integrative figure, or at most two figures, covering all new analyses. A network-centered synthesis is currently preferred, potentially combined with compact effect-size or robustness summaries. The earlier four-panel figure concept is only a component library, not the final figure plan.**
+
 Input matrix: `SDY2583_integrated_clinical_immune_score_matrix_ALL10_with_CP23.csv`
 
 Validated matrix dimensions:
@@ -36,17 +38,28 @@ Interpretive boundary:
 
 To determine whether the panel-specific findings represented isolated associations or a coordinated systemic architecture, cross-panel convergence was evaluated at the subject level. One principal integrated remodeling score was selected from each of the ten cytometry panels, and pairwise Spearman correlations were calculated after residualizing the scores for age, sex, and disease group in the full cohort. Thirty-nine of the 45 pairwise comparisons remained significant after Benjamini–Hochberg correction. The strongest convergence was observed between CP24 CD8 differentiation remodeling and CP28 T/NK-interface remodeling (rho = 0.563, qFDR = 2.67 × 10^-69), between CP8 CD4 helper/regulatory remodeling and CP25 CD4 regulatory-checkpoint remodeling (rho = 0.487, qFDR = 1.32 × 10^-49), and between CP7 checkpoint remodeling and CP28 T/NK-interface remodeling (rho = 0.466, qFDR = 5.80 × 10^-45). Myeloid convergence was also evident between CP10 myeloid/granulocytic remodeling and CP23 monocyte/macrophage-like remodeling (rho = 0.370, qFDR = 2.21 × 10^-27), whereas CP16 APC/DC-like remodeling correlated with CP23 monocyte/macrophage-like remodeling (rho = 0.239, qFDR = 7.53 × 10^-12). Additional within-domain associations included CP7–CP24 CD8 remodeling (rho = 0.261, qFDR = 6.04 × 10^-14) and CP26–CP28 NK/T–NK-interface remodeling (rho = 0.256, qFDR = 1.69 × 10^-13). All prespecified cross-panel associations retained the same positive direction in the cancer-only and healthy-only analyses after age and sex adjustment, indicating that the observed convergence was not attributable solely to the cancer-versus-healthy group separation.
 
-## Figure plan — working hold
+## Figure strategy — deferred until all analyses are complete
 
-Proposed main figure title: **Cross-panel convergence defines a coordinated peripheral immune-remodeling architecture**
+Do not create the final figure now. After all additional analyses are complete, select only the most informative and nonredundant results for one integrated summary figure, or at most two figures.
 
-- **Panel A — Analysis schematic:** 850 participants, 66 scores, 10 panels, covariate residualization, and selection of one principal integrated score per panel.
-- **Panel B — Principal-score heatmap:** 10 × 10 adjusted Spearman correlation matrix for the ten integrated scores, with rho values printed and FDR-significant cells marked.
-- **Panel C — Prespecified convergence forest/dot plot:** CP7–CP24, CP7–CP28, CP24–CP28, CP8–CP25, CP10–CP16, CP10–CP23, CP16–CP23, and CP26–CP28 displayed for full, cancer-only, and healthy-only analyses. Bootstrap 95% confidence intervals should be added before finalization.
-- **Panel D — Integrated-score network:** ten panel nodes; edges restricted to qFDR < 0.05, with edge width proportional to |rho| and edge style indicating direction. Nodes should be organized by CD8/T-cell, CD4/regulatory, B-cell/humoral, NK/T–NK, and myeloid/APC domains.
+Preferred current concept:
+- a central immune-remodeling network linking the ten panel-level integrated scores or the final reduced biological axes;
+- node organization by CD8/T-cell, CD4/regulatory, B-cell/humoral, NK/T–NK, and myeloid/APC/monocyte domains;
+- edge width proportional to the final selected association magnitude;
+- restrained annotation of the strongest validated relationships;
+- compact peripheral elements, only if needed, showing robustness across full, cancer-only, and healthy-only analyses or showing the outputs of later clustering/transcriptomic/immunotype analyses.
 
-Suggested supplementary material:
-- Supplementary full 66 × 66 clustered score heatmap;
+Potential components to retain for later selection, not as mandatory separate panels:
+- analysis schematic: 850 participants, 66 scores, 10 panels, covariate residualization, and selection of principal integrated axes;
+- 10 × 10 principal-score heatmap;
+- prespecified convergence effect-size plot with bootstrap 95% confidence intervals;
+- integrated-score network;
+- final patient-level phenotype, immunotype, transcriptomic, or clustering overlays arising from subsequent analyses.
+
+The final design decision must be made only after reviewing all new analyses together. The objective is to avoid adding multiple fragmented figures and instead produce a single clear visual synthesis of the translational contribution.
+
+Suggested supplementary material, to be reconsidered after all analyses:
+- full 66 × 66 clustered score heatmap;
 - panel-pair median-correlation matrix;
 - full pairwise correlation table with n, rho, P, and qFDR;
 - robustness table comparing full, cancer-only, and healthy-only estimates;
