@@ -1,0 +1,12 @@
+{
+  "resamples": 2000,
+  "seed": 2583,
+  "n_complete": 829,
+  "pc1_loading_cosine_median": 0.9983536172838204,
+  "pc2_loading_cosine_median": 0.9938213243600279,
+  "minimum_subspace_correlation_median": 0.9943232286133113,
+  "all66_direction_stability_at_least_0_95": 62,
+  "all66_bootstrap_intervals_excluding_zero": 62,
+  "all66_fdr_significant_at_least_0_80_resamples": 56,
+  "principal_intervals_excluding_zero": 10
+}
