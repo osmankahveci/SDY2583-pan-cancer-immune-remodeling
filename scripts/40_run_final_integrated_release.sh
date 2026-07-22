@@ -16,11 +16,18 @@ BOOTSTRAPS="${SDY2583_BOOTSTRAP_RESAMPLES:-2000}"
 BOOTSTRAP_SEED="${SDY2583_BOOTSTRAP_SEED:-2583}"
 mkdir -p "$RESULTS_DIR"
 
-python scripts/41_run_integrated_systems_analysis.py \
+# Run from the repository root so the local final_analysis package is importable.
+export PYTHONPATH="$(pwd)${PYTHONPATH:+:$PYTHONPATH}"
+
+python -m final_analysis.convergence_immunotype \
   --matrix "$SDY2583_ALL10_MATRIX" \
   --output-dir "$RESULTS_DIR"
 
-python scripts/42_run_frequency_matching_table1.py \
+python -m final_analysis.pca_clustering \
+  --matrix "$SDY2583_ALL10_MATRIX" \
+  --output-dir "$RESULTS_DIR"
+
+python -m final_analysis.frequency_matching \
   --matrix "$SDY2583_ALL10_MATRIX" \
   --cp24 "$SDY2583_CP24_FEATURES" \
   --cp8 "$SDY2583_CP8_FEATURES" \
@@ -32,7 +39,7 @@ python scripts/42_run_frequency_matching_table1.py \
   --cp28 "$SDY2583_CP28_FEATURES" \
   --output-dir "$RESULTS_DIR"
 
-python scripts/43_run_bootstrap_component_stability.py \
+python -m final_analysis.bootstrap_stability \
   --matrix "$SDY2583_ALL10_MATRIX" \
   --output-dir "$RESULTS_DIR" \
   --resamples "$BOOTSTRAPS" \
