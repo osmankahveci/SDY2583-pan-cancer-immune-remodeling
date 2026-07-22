@@ -1,0 +1,16 @@
+analysis_layer,metric,value,interpretation_boundary
+cohort,total_participants,850,408 healthy controls and 442 patients with cancer
+cross_panel,adjusted_spearman_fdr_significant_pairs,38/45,age sex and disease adjusted pairwise-complete analysis
+cross_panel,pearson_fdr_significant_pairs,39/45,parametric sensitivity analysis
+cross_panel,spearman_significant_pairs_same_direction_in_both_strata,38/38,healthy-only and cancer-only direction check
+immunotype,principal_scores_significant_full_training_validation,10/10,internal split-sample replication rather than external validation
+pca,pc1_variance_percent,30.5,global multi-compartment remodeling dimension
+pca,pc2_variance_percent,16.6,myeloid-monocyte-NK versus CD8-TNK configuration dimension
+clustering,maximum_silhouette,0.207,insufficient separation for new discrete subtype claims
+bounded_outcomes,direction_and_fdr_concordant_all_models,8/8,linear HC3 empirical-logit HC3 and beta regression
+matching,five_year_pairs,265,same-sex nearest-age matching without replacement
+matching,ten_year_pairs,273,same-sex nearest-age matching without replacement
+matching,paired_outcomes_fdr_significant_both_calipers,8/8,matched-pair-aware inference
+bootstrap,resamples,2000,disease-stratified nonparametric bootstrap
+bootstrap,scores_directionally_stable_at_least_95_percent,62/66,internal stability only
+bootstrap,principal_intervals_excluding_zero,10/10,CP24 remains the weakest multiplicity-sensitive principal score
