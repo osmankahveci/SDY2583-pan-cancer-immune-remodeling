@@ -1,0 +1,11 @@
+panel,number_of_scores,scores_direction_stability_at_least_0_95,scores_bootstrap_interval_excluding_zero,scores_fdr_significant_in_at_least_0_80_resamples,minimum_direction_stability_probability,minimum_fdr_significance_probability,principal_score_direction_stability_probability,principal_score_fdr_significance_probability
+CP7,6,6,6,5,0.9785,0.529,1.0,1.0
+CP8,6,6,6,6,1.0,0.993,1.0,1.0
+CP10,6,5,5,5,0.864,0.1795,1.0,1.0
+CP16,6,6,6,6,0.9985,0.8635,1.0,1.0
+CP22,7,7,7,7,0.998,0.831,1.0,1.0
+CP23,5,5,5,5,0.9975,0.8775,1.0,0.998
+CP24,7,6,6,3,0.826,0.1465,0.988,0.601
+CP25,9,9,9,9,0.999,0.879,1.0,1.0
+CP26,5,5,5,4,0.994,0.745,1.0,1.0
+CP28,9,7,7,6,0.898,0.25,1.0,1.0
