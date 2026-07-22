@@ -4,20 +4,21 @@ These files are aggregate-only outputs from the final integrated analysis
 release. They contain no participant identifiers, participant-level scores,
 matched-pair IDs, or individual PCA coordinates.
 
-## Committed cross-panel, immunotype, PCA, and clustering evidence
+## Cross-panel, immunotype, PCA, and clustering evidence
 
 - `manuscript_locked_key_results.csv`
 - `integrated_systems_analysis_summary.json`
+- `cross_panel_convergence_summary.csv`
+- `immunotype_principal_score_omnibus.csv`
+- `immunotype_adjusted_means_full_cohort.csv`
 - `pca_principal_score_loadings.csv`
 - `pca_immunotype_centroids.csv`
 - `pca_training_validation_replication.csv`
 - `clustering_stability_metrics.csv`
 
-Complete cross-panel and immunotype tables are regenerated locally by:
-
-```bash
-python -m final_analysis.convergence_immunotype
-```
+The final code additionally regenerates all-subset adjusted marginal means and
+full intermediate correlation tables locally. Participant-level residuals and
+PCA coordinates are intentionally excluded.
 
 The locked scientific results and interpretation boundaries are also recorded
 in:
@@ -25,8 +26,6 @@ in:
 - `analysis_notes/CROSS_PANEL_CONVERGENCE_MANUSCRIPT_HOLD.md`
 - `analysis_notes/IMMUNOTYPE_REMODELING_ASSOCIATION_HOLD.md`
 - `analysis_notes/PCA_GLOBAL_REMODELING_HOLD.md`
-
-Participant-level residuals and PCA coordinates are intentionally excluded.
 
 ## Bounded-outcome, matching, and cohort summaries
 
