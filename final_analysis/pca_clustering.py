@@ -1,6 +1,7 @@
 from __future__ import annotations
 import argparse,json
 import numpy as np,pandas as pd
+import statsmodels.formula.api as smf
 from sklearn.cluster import AgglomerativeClustering,KMeans
 from sklearn.decomposition import PCA
 from sklearn.metrics import adjusted_rand_score,calinski_harabasz_score,davies_bouldin_score,normalized_mutual_info_score,silhouette_score
@@ -31,15 +32,41 @@ def run(matrix=None,out=None):
         for pc in ["PC1","PC2"]:
             v=sf.loc[c.immunotype.eq(g),pc]; se=v.std(ddof=1)/np.sqrt(len(v)); cen.append(dict(immunotype=g,component=pc,n=len(v),centroid=v.mean(),ci95_low=v.mean()-1.96*se,ci95_high=v.mean()+1.96*se))
     ct=pd.DataFrame(cen); ct.to_csv(o/"pca_immunotype_centroids.csv",index=False)
-    fullc=ct.pivot(index="immunotype",columns="component",values="centroid").loc[IMMUNOTYPES]; rep=[]
+    # Separate training and validation PCA fits for loading/subspace stability.
+    subset_fit={}
     for subset in ["TRAINING","VALIDATION"]:
         sc,sz,sp,sl,ss=pca_fit(d[d.cohort.eq(subset)])
-        identity=abs(l[:,0]@sl[:,0])+abs(l[:,1]@sl[:,1]); swapped=abs(l[:,0]@sl[:,1])+abs(l[:,1]@sl[:,0])
-        if swapped>identity: sl[:,[0,1]]=sl[:,[1,0]]; ss[:,[0,1]]=ss[:,[1,0]]
-        for j in range(2):
-            if l[:,j]@sl[:,j]<0: sl[:,j]*=-1; ss[:,j]*=-1
-        subcen=np.array([[ss[sc.immunotype.eq(g).to_numpy(),j].mean() for j in range(2)] for g in IMMUNOTYPES])
-        for j in range(2): rep.append(dict(subset=subset,component=f"PC{j+1}",n=len(sc),loading_correlation_with_full=np.corrcoef(l[:,j],sl[:,j])[0,1],centroid_correlation_with_full=np.corrcoef(fullc.iloc[:,j],subcen[:,j])[0,1],explained_variance_ratio=sp.explained_variance_ratio_[j]))
+        subset_fit[subset]=(sc,sz,sp,sl,ss)
+    trc,trz,trp,trl,trs=subset_fit["TRAINING"]; vac,vaz,vap,val,vas=subset_fit["VALIDATION"]
+    for j in range(2):
+        if trl[:,j]@val[:,j]<0: val[:,j]*=-1; vas[:,j]*=-1
+    loading_cos=[float(trl[:,j]@val[:,j]) for j in range(2)]
+    subspace=np.linalg.svd(trl[:,:2].T@val[:,:2],compute_uv=False)
+
+    # Fit residualization/scaling/PCA in training and project validation.
+    comp=d[["age","sex","disease","immunotype","cohort",*PRINCIPAL.values()]].dropna().copy()
+    tr=comp[comp.cohort.eq("TRAINING")].copy(); va=comp[comp.cohort.eq("VALIDATION")].copy()
+    ztr=pd.DataFrame(index=tr.index); zva=pd.DataFrame(index=va.index)
+    for panel in PANEL_ORDER:
+        y=PRINCIPAL[panel]; fit=smf.ols(f"Q('{y}') ~ age + C(sex) + C(disease)",data=tr,eval_env=-1).fit()
+        rtr=tr[y]-fit.predict(tr); rva=va[y]-fit.predict(va); mu=rtr.mean(); sd=rtr.std(ddof=1)
+        ztr[panel]=(rtr-mu)/sd; zva[panel]=(rva-mu)/sd
+    proj=PCA(n_components=len(PANEL_ORDER),svd_solver="full")
+    strn=proj.fit_transform(ztr)
+    sval=proj.transform(zva)
+    pl=proj.components_.T.copy()
+    # Apply identical orientation to training scores and validation projections.
+    if pl[:,0].mean()<0:
+        pl[:,0]*=-1; strn[:,0]*=-1; sval[:,0]*=-1
+    my=[PANEL_ORDER.index(x) for x in ["CP10","CP16","CP23","CP26"]]
+    tn=[PANEL_ORDER.index(x) for x in ["CP7","CP24","CP25","CP28"]]
+    if pl[my,1].mean()-pl[tn,1].mean()<0:
+        pl[:,1]*=-1; strn[:,1]*=-1; sval[:,1]*=-1
+    ctr=np.array([[strn[tr.immunotype.eq(g).to_numpy(),j].mean() for j in range(2)] for g in IMMUNOTYPES])
+    cva=np.array([[sval[va.immunotype.eq(g).to_numpy(),j].mean() for j in range(2)] for g in IMMUNOTYPES])
+    rep=[]
+    for j in range(2):
+        rep.append(dict(component=f"PC{j+1}",training_n=len(trc),validation_n=len(vac),training_explained_variance_ratio=trp.explained_variance_ratio_[j],validation_explained_variance_ratio=vap.explained_variance_ratio_[j],loading_cosine_similarity_training_validation=loading_cos[j],subspace_canonical_correlation_1=subspace[0],subspace_canonical_correlation_2=subspace[1],centroid_correlation_training_projected_validation=np.corrcoef(ctr[:,j],cva[:,j])[0,1]))
     pd.DataFrame(rep).to_csv(o/"pca_training_validation_replication.csv",index=False)
     x=z.to_numpy(); original=pd.Categorical(c.immunotype,categories=IMMUNOTYPES).codes; rows=[]
     for k in range(2,9):
@@ -49,7 +76,7 @@ def run(matrix=None,out=None):
         gm=GaussianMixture(k,covariance_type="full",random_state=SEED,n_init=20).fit(x); lab=gm.predict(x); valid=k>1 and len(np.unique(lab))>1
         rows.append(dict(algorithm="gaussian_mixture",k=k,n=len(x),silhouette=silhouette_score(x,lab) if valid else np.nan,calinski_harabasz=calinski_harabasz_score(x,lab) if valid else np.nan,davies_bouldin=davies_bouldin_score(x,lab) if valid else np.nan,adjusted_rand_vs_original_immunotype=adjusted_rand_score(original,lab),normalized_mutual_information_vs_original_immunotype=normalized_mutual_info_score(original,lab),bic=gm.bic(x),aic=gm.aic(x)))
     cl=pd.DataFrame(rows); cl.to_csv(o/"clustering_stability_metrics.csv",index=False)
-    summary={"n_complete":len(c),"pc1_explained_variance":p.explained_variance_ratio_[0],"pc2_explained_variance":p.explained_variance_ratio_[1],"hopkins_statistic":hopkins(x),"maximum_silhouette_non_gmm":cl.query("algorithm!='gaussian_mixture'").silhouette.max()}
+    summary={"n_complete":len(c),"pc1_explained_variance":p.explained_variance_ratio_[0],"pc2_explained_variance":p.explained_variance_ratio_[1],"hopkins_statistic":hopkins(x),"maximum_silhouette_non_gmm":cl.query("algorithm!='gaussian_mixture'").silhouette.max(),"training_validation_pc1_loading_cosine":loading_cos[0],"training_validation_pc2_loading_cosine":loading_cos[1],"training_projected_validation_pc1_centroid_correlation":np.corrcoef(ctr[:,0],cva[:,0])[0,1],"training_projected_validation_pc2_centroid_correlation":np.corrcoef(ctr[:,1],cva[:,1])[0,1]}
     (o/"pca_clustering_summary.json").write_text(json.dumps(summary,indent=2)); print(json.dumps(summary,indent=2))
 
 def main():
