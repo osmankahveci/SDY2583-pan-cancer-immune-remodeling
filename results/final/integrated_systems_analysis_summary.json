@@ -1,0 +1,23 @@
+{
+  "matrix_file": "SDY2583_integrated_clinical_immune_score_matrix_ALL10_with_CP23.csv",
+  "n_master": 850,
+  "n_healthy": 408,
+  "n_cancer": 442,
+  "full_spearman_fdr_significant": 38,
+  "full_pearson_fdr_significant": 39,
+  "significant_spearman_same_direction_both_strata": 38,
+  "pca": {
+    "n_complete": 829,
+    "pc1_explained_variance": 0.3053361834097076,
+    "pc2_explained_variance": 0.16596988493698014,
+    "training_validation_pc1_loading_cosine": 0.9530106530081786,
+    "training_validation_pc2_loading_cosine": 0.8840557705075992,
+    "training_projected_validation_pc1_centroid_correlation": 0.9842108930280956,
+    "training_projected_validation_pc2_centroid_correlation": 0.9769216744194773
+  },
+  "clustering": {
+    "n_complete": 829,
+    "hopkins_statistic": 0.7485694266305244,
+    "maximum_silhouette_non_gmm": 0.20736100188311096
+  }
+}
