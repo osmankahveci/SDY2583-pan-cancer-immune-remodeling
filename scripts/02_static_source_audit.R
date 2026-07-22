@@ -129,14 +129,59 @@ panel_results <- do.call(rbind, lapply(panels, function(panel) {
   )
 }))
 
-# Raw/derived data extensions must not be committed outside source/config paths.
-forbidden_extensions <- "\\.(fcs|rdata|rds|zip|xlsx|xls|csv|tsv)$"
+# Binary/raw data must never be committed outside source/config paths.
+binary_forbidden_extensions <- "\\.(fcs|rdata|rds|zip|xlsx|xls)$"
 tracked_like_files <- list.files(root, full.names = TRUE, recursive = TRUE, all.files = TRUE)
 tracked_like_files <- tracked_like_files[!grepl("/\\.git/", tracked_like_files)]
-forbidden_data <- tracked_like_files[
-  grepl(forbidden_extensions, tracked_like_files, ignore.case = TRUE) &
+forbidden_binary_data <- tracked_like_files[
+  grepl(binary_forbidden_extensions, tracked_like_files, ignore.case = TRUE) &
     !grepl("/(config|scripts|R)/", tracked_like_files)
 ]
+
+# Aggregate CSV/TSV result tables are allowed only in the curated final-results
+# directory or for the three legacy aggregate bootstrap summaries. Their header
+# must not expose participant-level identifiers or matched subject IDs.
+tabular_files <- tracked_like_files[
+  grepl("\\.(csv|tsv)$", tracked_like_files, ignore.case = TRUE) &
+    !grepl("/(config|scripts|R)/", tracked_like_files)
+]
+relative_tabular <- substring(tabular_files, nchar(root) + 2L)
+legacy_aggregate <- grepl(
+  "^results/bootstrap_(component_stability_summary|panel_component_summary|principal_score_effect_stability)\\.csv$",
+  relative_tabular
+)
+curated_aggregate <- grepl("^results/final/[^/]+\\.(csv|tsv)$", relative_tabular)
+allowed_tabular <- curated_aggregate | legacy_aggregate
+forbidden_tabular_location <- tabular_files[!allowed_tabular]
+
+prohibited_header_pattern <- paste(
+  c(
+    "(^|,)(subject_id|subject_accession|participant_id|master_id)(,|$)",
+    "(^|,)(cancer_id|healthy_id|matched_pair_id|pair_id)(,|$)",
+    "(^|,)(individual_pc1|individual_pc2|pca_coordinate)(,|$)"
+  ),
+  collapse = "|"
+)
+aggregate_header_results <- do.call(rbind, lapply(tabular_files[allowed_tabular], function(path) {
+  first_line <- readLines(path, n = 1L, warn = FALSE, encoding = "UTF-8")
+  if (length(first_line) == 0L) first_line <- ""
+  data.frame(
+    file = substring(path, nchar(root) + 2L),
+    allowed_location = TRUE,
+    prohibited_identifier_header = grepl(
+      prohibited_header_pattern,
+      tolower(first_line),
+      perl = TRUE
+    ),
+    stringsAsFactors = FALSE
+  )
+}))
+if (is.null(aggregate_header_results)) {
+  aggregate_header_results <- data.frame(
+    file = character(), allowed_location = logical(),
+    prohibited_identifier_header = logical(), stringsAsFactors = FALSE
+  )
+}
 
 out_dir <- file.path(root, "outputs", "static-audit")
 dir.create(out_dir, recursive = TRUE, showWarnings = FALSE)
@@ -155,6 +200,11 @@ write.csv(
 write.csv(
   panel_results,
   file.path(out_dir, "panel-source-results.csv"),
+  row.names = FALSE
+)
+write.csv(
+  aggregate_header_results,
+  file.path(out_dir, "aggregate-result-header-audit.csv"),
   row.names = FALSE
 )
 
@@ -207,18 +257,43 @@ if (any(!panel_results$has_source)) {
     )
   )
 }
-if (length(forbidden_data) > 0L) {
+if (length(forbidden_binary_data) > 0L) {
   failures <- c(
     failures,
     paste0(
-      "Potential raw/derived data committed: ",
-      paste(substring(forbidden_data, nchar(root) + 2L), collapse = ", ")
+      "Potential raw/binary data committed: ",
+      paste(substring(forbidden_binary_data, nchar(root) + 2L), collapse = ", ")
+    )
+  )
+}
+if (length(forbidden_tabular_location) > 0L) {
+  failures <- c(
+    failures,
+    paste0(
+      "Tabular data committed outside the aggregate allowlist: ",
+      paste(substring(forbidden_tabular_location, nchar(root) + 2L), collapse = ", ")
+    )
+  )
+}
+if (nrow(aggregate_header_results) > 0L &&
+    any(aggregate_header_results$prohibited_identifier_header)) {
+  failures <- c(
+    failures,
+    paste0(
+      "Aggregate result tables contain prohibited participant identifiers: ",
+      paste(
+        aggregate_header_results$file[
+          aggregate_header_results$prohibited_identifier_header
+        ],
+        collapse = ", "
+      )
     )
   )
 }
 
 cat("Parsed ", nrow(parse_results), " R files.\n", sep = "")
 cat("Checked ", nrow(runner_reference_results), " runner references.\n", sep = "")
+cat("Audited ", nrow(aggregate_header_results), " aggregate result tables.\n", sep = "")
 cat("All ten panel source directories contain R code.\n")
 if (length(failures) > 0L) stop(paste(failures, collapse = "\n"))
 cat("Static source audit passed.\n")

@@ -10,6 +10,8 @@
 
 # Local configuration
 config/paths.R
+config/final_analysis_paths.env
+*.local.env
 
 # Raw, participant-level, serialized, and derived data
 /data/raw/
@@ -22,7 +24,9 @@ config/paths.R
 
 # Generated analysis material
 /outputs/
-/results/
+/results/*
+!/results/final/
+!/results/final/**
 /figures/
 /logs/
 session-info.txt
@@ -36,6 +40,13 @@ session-info.txt
 /*.Rcheck/
 vignettes/*.html
 vignettes/*.pdf
+
+# Python environments and caches
+.venv/
+venv/
+__pycache__/
+*.py[cod]
+.pytest_cache/
 
 # Dependency libraries and deployment credentials
 renv/library/

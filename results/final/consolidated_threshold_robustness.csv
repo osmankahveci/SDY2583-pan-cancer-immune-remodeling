@@ -1,0 +1,11 @@
+Panel,Robustness analysis,Targeted variables,Direction + FDR preserved,Percent direction + FDR preserved,Direction preserved; FDR not all sets,Direction not preserved,Composite variables,Composite direction + FDR preserved,Principal integrated score robust,Interpretive note
+CP7,Main/permissive/stringent marker-threshold sensitivity,11,11,100.0,0,0,4.0,4.0,Yes,All selected features and four composite scores were robust.
+CP8,Main/permissive/stringent marker-threshold sensitivity,28,28,100.0,0,0,6.0,6.0,Yes,All 28 targeted outcomes retained direction and FDR.
+CP10,Main/permissive/stringent marker-threshold sensitivity,33,29,87.87878787878788,3,1,6.0,5.0,Yes,Integrated myeloid/granulocytic remodeling score was robust.
+CP16,Main/permissive/stringent marker-threshold sensitivity,60,33,55.0,14,13,6.0,4.0,Yes,Integrated APC/DC-like myeloid remodeling score was robust; individual rare-feature gates were less stable.
+CP22,Main/permissive/stringent marker-threshold sensitivity,55,39,70.9090909090909,6,10,7.0,6.0,Yes,"Integrated humoral B-cell remodeling score was robust; the score remains a repatterning construct, not total IgG/IgA abundance."
+CP23,Main/permissive/stringent marker-threshold sensitivity,20,16,80.0,4,0,5.0,5.0,Yes,All five composites retained direction and global FDR.
+CP24,"Event-count analysis-set sensitivity (all, ≥500, ≥1000 events)",16,8,50.0,8,0,,,Not directly tested in this summary,All 16 outcomes retained direction; 8 retained module-level FDR across event-count analysis sets. Marker-threshold shifts were not the final CP24 robustness format.
+CP25,Main/permissive/stringent marker-threshold sensitivity,73,48,65.75342465753425,23,2,9.0,9.0,Yes,"All nine composite scores, including the integrated score, were directionally and statistically robust."
+CP26,Main/permissive/stringent marker-threshold sensitivity,20,10,50.0,7,3,,,Yes,Integrated NK remodeling score retained direction and FDR in all threshold sets.
+CP28,Main/permissive/stringent marker-threshold sensitivity,80,35,43.75,34,11,,,Yes,"Integrated T/NK-interface, CD8-enrichment, and T-cell-composition scores retained direction and FDR."

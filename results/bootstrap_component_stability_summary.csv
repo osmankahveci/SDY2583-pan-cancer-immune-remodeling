@@ -1,0 +1,13 @@
+metric,reference_or_value,bootstrap_median,bootstrap_95pct_low,bootstrap_95pct_high
+Bootstrap resamples,2000,,,
+Common complete-case population,829,,,
+PC1 explained variance,0.3053361834097076,0.30564416785801524,0.2847591225996471,0.32538363696534023
+PC2 explained variance,0.16596988493698014,0.16688236161473485,0.1547203678282143,0.18014342562874863
+PC1 loading cosine congruence,1.0,0.9983536172838212,0.9942149846054756,0.9995581186733143
+PC2 loading cosine congruence,1.0,0.9938213243600279,0.9816115105193414,0.9983742989255106
+Two-component subspace minimum canonical correlation,1.0,0.994323228613311,0.9824030066920122,0.9984364093165659
+Two-component subspace mean canonical correlation,1.0,0.9966962856901516,0.9905785371300162,0.9989379279359205
+PC1 immunotype-centroid correlation,1.0,0.9954085326313702,0.9719590488207401,0.9996234880125906
+PC2 immunotype-centroid correlation,1.0,0.9954923863261749,0.9772581324509764,0.9996567416397979
+Bootstrap samples with all-positive PC1 loadings,1.0,,,
+Bootstrap samples retaining positive myeloid-vs-CD8 PC2 pole,1.0,,,

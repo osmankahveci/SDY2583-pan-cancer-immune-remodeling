@@ -1,189 +1,231 @@
 # SDY2583 pan-cancer immune remodeling
 
-Reproducible analysis code for the secondary multi-panel reanalysis of ImmPort
-SDY2583 *Blood Immunotypes*. The repository covers CP7, CP8, CP10, CP16, CP22,
-CP23, CP24, CP25, CP26, and CP28, including demographic adjustment, composite
-phenotypes, robustness analyses, clinical annotation, and figure generation.
+Reproducible code and aggregate validation outputs for the secondary multi-panel
+reanalysis of ImmPort **SDY2583 — Blood Immunotypes**. The project covers ten
+flow-cytometry panels (CP7, CP8, CP10, CP16, CP22, CP23, CP24, CP25, CP26, and
+CP28) and the final integrated analyses used in the associated manuscript,
+*Convergent Peripheral Immune Remodeling Across Lymphoid and Myeloid
+Compartments in Cancer*.
 
 ## Release status
 
-This is a provenance-tracked all-panel reproducibility release. Raw FCS files,
-participant-level metadata and matrices, serialized workspaces, and generated
-outputs are excluded from Git.
+**Version 1.0.0 — final public reproducibility release**
 
-All ten manuscript panels have completed independent downstream archive
-validation from archived participant-level feature, metadata, score, matching,
-interaction, and threshold-sensitivity tables. Numerical agreement is at
-floating-point/machine-precision scale, with exact subject-pair reproduction
-where archived matching tables were available.
+This repository contains:
 
-A fresh raw-FCS end-to-end rerun was not performed. FCS inventory,
-compensation, fixed-logicle transformation, threshold gating, and regeneration
-of participant-level feature tables are explicitly outside the accepted
-validation scope of this release.
+- all ten panel-specific downstream analysis pipelines;
+- the final cross-panel convergence workflow;
+- mapping of the ten principal scores to the five original SDY2583 immunotypes;
+- disease-adjusted PCA and clustering-stability analyses;
+- bounded-percentage model sensitivity analyses;
+- same-sex nearest-age matching and matched-pair inference;
+- Table 1 and panel-availability generation;
+- 2,000-resample bootstrap component-stability analysis;
+- the locked v6 code for the integrated Figure 7;
+- curated aggregate results supporting the manuscript.
+
+Raw FCS files, participant-level metadata, participant-level feature/score
+matrices, matched subject identifiers, serialized workspaces, and generated
+participant-level outputs are not distributed.
+
+### Accepted validation boundary
+
+All ten manuscript panels completed independent **downstream archive
+validation** from archived participant-level feature, metadata, score, matching,
+interaction, and threshold-sensitivity tables. A fresh raw-FCS-to-results rerun
+was not performed. Compensation, logicle transformation, primary threshold
+regeneration, and regeneration of participant-level feature tables therefore
+remain outside the accepted validation scope.
 
 Accurate release description:
 
-> Provenance-tracked all-panel reproducibility release with all ten panel downstream analyses independently archive-validated. Raw-FCS end-to-end re-execution was not performed and is outside the accepted validation scope of this release.
+> Provenance-tracked all-panel reproducibility release with downstream analyses independently archive-validated and final integrated analyses numerically executed on the local ALL10 matrix. Fresh raw-FCS end-to-end re-execution was not performed.
 
-Two source classes are kept separate:
+Source provenance remains explicit:
 
-- **`SAFE`**: original analysis source recovered from the project archive and
-  modified only for portable paths and non-interactive execution.
-- **`RECONSTRUCTED`**: source rebuilt where the original script was not visible,
-  using archived thresholds, marker maps, feature schemas, composite
-  definitions, Methods/Results records, and numerical output tables.
+- **`SAFE`** — recovered archived source with portability/non-interactive edits only.
+- **`RECONSTRUCTED`** — source rebuilt from archived thresholds, schemas,
+  composite definitions, Methods/Results records, and numerical output tables.
 
-Do not remove the provenance suffixes. See [VALIDATION_STATUS.md](VALIDATION_STATUS.md)
-and [validation/ALL_PANEL_DOWNSTREAM_VALIDATION_SUMMARY.md](validation/ALL_PANEL_DOWNSTREAM_VALIDATION_SUMMARY.md)
-for the accepted validation boundary and panel-level evidence.
+See [`VALIDATION_STATUS.md`](VALIDATION_STATUS.md),
+[`PROVENANCE.md`](PROVENANCE.md), and
+[`validation/ALL_PANEL_DOWNSTREAM_VALIDATION_SUMMARY.md`](validation/ALL_PANEL_DOWNSTREAM_VALIDATION_SUMMARY.md).
 
-## Panel coverage
+## Study overview
 
-| Panel | Included source | Status |
-|---|---|---|
-| CP7 | Reconstructed Steps 1–7B | Downstream archive-validated after score, matching, model, and threshold-family corrections. |
-| CP8 | Reconstructed Steps 1–7B | Downstream archive-validated after matching, age-family, FDR, and threshold-family corrections. |
-| CP10 | Reconstructed Steps 1/1B + recovered Steps 2–8 | Downstream archive-validated; recovered downstream algorithms retained. |
-| CP16 | Recovered Steps 1–7B | Downstream archive-validated; recovered sequence retained. |
-| CP22 | Recovered Steps 1–7B | Downstream archive-validated; recovered sequence retained. |
-| CP23 | Recovered Steps 1–7B, including Step 6B | Downstream archive-validated; recovered sequence retained. |
-| CP24 | Recovered pilot codebook + reconstructed full-cohort Steps 1–7B | Downstream archive-validated after outcome-family, PD-1, model-count, and hierarchical-score corrections. |
-| CP25 | Reconstructed Steps 1–7B | Downstream archive-validated after age-family, matching, interaction, and exact threshold-family corrections. |
-| CP26 | Reconstructed Steps 1–7B | Downstream archive-validated after score-universe and integrated-score corrections; includes BV510-A dump fallback. |
-| CP28 | Reconstructed Steps 1–7B | Downstream archive-validated after duplicate-module, event-QC, age-family, matching, and threshold-family corrections. |
+The local master matrix contains 850 participants:
 
-See [PROVENANCE.md](PROVENANCE.md) for panel-level source evidence and
-limitations.
+- 408 healthy controls;
+- 442 patients with cancer;
+- 503 participants in the original training cohort;
+- 347 participants in the original validation cohort.
+
+The full integrated catalogue contains 66 directionally oriented composite
+scores. The main cross-panel narrative is based on ten prespecified principal
+scores representing eight biological axes:
+
+1. CD8 differentiation/checkpoint remodeling — CP7 and CP24
+2. CD4 helper/regulatory-like remodeling — CP8 and CP25
+3. B-cell/humoral repatterning — CP22
+4. NK-cell remodeling/attenuation — CP26
+5. T/NK-interface remodeling — CP28
+6. Myeloid/granulocytic remodeling — CP10
+7. APC/DC-like remodeling — CP16
+8. Monocyte/macrophage-like remodeling — CP23
+
+The CP22 immunoglobulin-isotype score represents denominator-specific B-cell
+isotype architecture/repatterning. It is not a measure of total IgG, total IgA,
+or circulating immunoglobulin concentration.
+
+## Final integrated results
+
+Curated aggregate tables are under [`results/final/`](results/final/).
+Manuscript-level checks include:
+
+- 38/45 age-, sex-, and disease-adjusted Spearman relationships among the ten
+  principal scores were FDR-significant;
+- 39/45 were FDR-significant in Pearson sensitivity analysis;
+- all 38 Spearman-significant relationships retained direction in both the
+  cancer-only and healthy-only analyses;
+- all ten principal scores differed across the five original immunotypes in the
+  full, training, validation, cancer-only, and treatment-adjusted cancer-only
+  analyses;
+- disease-adjusted PC1 explained 30.5% and PC2 explained 16.6% of variance;
+- the integrated space showed non-random structure but weak discrete-cluster
+  separation (maximum non-GMM silhouette approximately 0.207);
+- all eight representative bounded percentage outcomes retained direction and
+  FDR significance across linear-HC3, empirical-logit, beta-regression, and
+  age-matched paired analyses;
+- 5-year matching produced 265 pairs and 10-year matching produced 273 pairs;
+- across 2,000 disease-stratified bootstrap resamples, 62/66 scores retained
+  direction in at least 95% of resamples and all ten principal score intervals
+  excluded zero.
+
+These are internal reproducibility and convergent-validity results, not an
+independent external validation cohort.
 
 ## Data access
 
-Source data are not redistributed. Obtain **SDY2583 — Blood Immunotypes** from
-ImmPort. Dataset DOI: <https://doi.org/10.21430/M3A0B9RD5T>. Use remains
-subject to ImmPort terms. See [DATA_ACCESS.md](DATA_ACCESS.md).
+Obtain the source data directly from ImmPort:
+
+- Study: **SDY2583 — Blood Immunotypes**
+- Dataset DOI: <https://doi.org/10.21430/M3A0B9RD5T>
+- Primary publication: Dyikanov et al., *Cancer Cell* (2024),
+  <https://doi.org/10.1016/j.ccell.2024.04.008>
+
+Use remains subject to ImmPort terms. See [`DATA_ACCESS.md`](DATA_ACCESS.md).
 
 ## Repository structure
 
 ```text
 R/
-  integration/        # metadata and cross-panel score builders
-  shared/             # portable paths and common workflow engines
-  panels/CP*/         # panel-specific recovered/reconstructed source
-config/paths.example.R
+  integration/                     metadata and cross-panel builders
+  figures/                         final integrated Figure 7 code
+  shared/                          portable paths and workflow engines
+  panels/CP*/                      panel-specific SAFE/RECONSTRUCTED source
+config/
+  paths.example.R
+  final_analysis_paths.example.env
 scripts/
   01_run_all_panels.R
-  02_static_source_audit.R
   10-19 panel runners
   20-28 panel validators
   30_validate_all_panels.R
-  99_session_info.R
-validation/            # panel-level archive-validation evidence
+  40_run_final_integrated_release.sh
+  41_run_integrated_systems_analysis.py
+  42_run_frequency_matching_table1.py
+  43_run_bootstrap_component_stability.py
+results/final/                     public aggregate-only final results
+validation/                        downstream archive-validation evidence
+analysis_notes/                    locked scientific interpretation records
 ```
 
-## Setup
+## Software setup
 
-Install dependencies:
+### R
 
 ```bash
 Rscript scripts/00_install_dependencies.R
 ```
 
-Copy `config/paths.example.R` to `config/paths.R` and configure local ImmPort,
-FCS, output, metadata, and optional archived-reference paths. The local config
-is ignored by Git.
+Copy `config/paths.example.R` to `config/paths.R` and configure the local
+ImmPort/FCS/output paths. The local file is ignored by Git.
 
-## Metadata reconstruction
+### Python
 
-`R/integration/STEP0_build_subject_metadata_matrix_RECONSTRUCTED.R` rebuilds the
-common subject/FCS metadata matrix from the unpacked ImmPort tabular package.
-It links subject, arm, and flow-result tables and standardizes:
+Python 3.10 or later is recommended.
 
-- DBG-style subject identifiers and panel/file mappings;
-- cancer versus healthy-control group;
-- age with the valid modeling range of 18–100 years and age strata;
-- sex and binary-sex sensitivity fields.
+```bash
+python -m venv .venv
+source .venv/bin/activate
+pip install -r requirements-final.txt
+```
 
-A local cancer-subgroup/therapy matrix may be supplied with
-`SDY2583_CLINICAL_ANNOTATION_FILE`. Participant-level merged outputs remain
-local and excluded from Git.
+Copy `config/final_analysis_paths.example.env` to a local file, edit the paths,
+and source it. Do not commit participant-level paths or data.
 
-## Run all panels
+## Running the panel workflows
 
-From the repository root:
+Run all ten panel pipelines:
 
 ```bash
 Rscript scripts/01_run_all_panels.R
 ```
 
-The master workflow builds/loads metadata, runs each panel in dependency order,
-performs panel validation, constructs the cross-panel immune-score matrix,
-records session information, and applies the all-panel release gate.
-
-Run a subset with:
+Run selected panels:
 
 ```bash
 SDY2583_PANELS=CP7,CP8,CP25 Rscript scripts/01_run_all_panels.R
 ```
 
-Individual runners:
+The all-panel release remains subject to the validation boundary above; it must
+not be described as a newly completed raw-FCS end-to-end execution.
 
-```text
-CP7   scripts/10_run_cp7_reconstructed.R
-CP8   scripts/11_run_cp8_reconstructed.R
-CP25  scripts/12_run_cp25_reconstructed.R
-CP26  scripts/13_run_cp26_reconstructed.R
-CP28  scripts/14_run_cp28_reconstructed.R
-CP10  scripts/15_run_cp10_pipeline.R
-CP16  scripts/16_run_cp16_recovered.R
-CP22  scripts/17_run_cp22_recovered.R
-CP23  scripts/18_run_cp23_recovered.R
-CP24  scripts/19_run_cp24_full_reconstructed.R
+## Running the final integrated analyses
+
+After setting the local input paths:
+
+```bash
+bash scripts/40_run_final_integrated_release.sh
 ```
 
-The CP24 runner executes the reconstructed 850-subject full-cohort sequence;
-the recovered pilot/QC codebook remains available separately.
+The runner executes:
 
-## Validation
+1. integrated convergence, immunotype, PCA, and clustering analyses;
+2. bounded-outcome models, matching diagnostics, and Table 1 generation;
+3. the 2,000-resample bootstrap stability analysis;
+4. the v6 integrated Figure 7 workflow when `Rscript` is available.
 
-Panel-specific validators check fixed non-sensitive archive benchmarks,
-including file counts where available, participant-table dimensions,
-feature/score counts, selected adjusted coefficients, matching counts,
-robustness classifications, and required outputs.
+Individual commands are documented in the scripts and in
+[`docs/FINAL_INTEGRATED_ANALYSIS_RELEASE.md`](docs/FINAL_INTEGRATED_ANALYSIS_RELEASE.md).
 
-When `SDY2583_<PANEL>_REFERENCE_DIR` is configured, generated CSVs can also be
-compared with archived tables by stable keys and numerical tolerance. Reports
-are written under `outputs/<PANEL>/validation/`.
+## Public-output boundary
 
-The completed release validation reported here is downstream archive
-validation from archived participant-level tables. It does not claim a fresh
-raw-FCS-to-results execution.
+The `results/final/` directory contains aggregate tables only. Public outputs do
+not include:
+
+- participant identifiers;
+- participant-level scores or predictions;
+- matched-pair subject IDs;
+- individual PCA coordinates;
+- raw event-level data;
+- FCS files.
 
 ## Static checks
 
-A data-free audit parses every R file, validates runner references and all ten
-panel directories, rejects author-specific paths and interactive file selection,
-and screens for accidentally committed data:
+A data-free audit parses R source, checks runner references and panel coverage,
+rejects author-specific executable paths and interactive file selection, and
+screens for accidentally committed data:
 
 ```bash
 Rscript scripts/02_static_source_audit.R
 ```
 
-The same audit runs through GitHub Actions in
-`.github/workflows/static-r-audit.yml`.
-
-## Safeguards
-
-- Raw data and participant-level outputs are not committed.
-- `.RData`, `.rds`, FCS, local configuration, and outputs are ignored.
-- Recovered and reconstructed source remain visibly distinguished.
-- Session information and validation reports can be retained locally as
-  additional execution evidence.
-- CP22 immunoglobulin-isotype scores represent B-cell isotype
-  architecture/repatterning, not total IgG or total IgA abundance.
+The same audit runs through GitHub Actions.
 
 ## Citation and license
 
 Cite this repository together with the ImmPort dataset and the primary SDY2583
-publication. Machine-readable metadata are in [CITATION.cff](CITATION.cff).
-Code is released under the [MIT License](LICENSE); the ImmPort data are not
-covered by that license.
+publication. Machine-readable metadata are in [`CITATION.cff`](CITATION.cff).
+Code is released under the [MIT License](LICENSE); ImmPort data are not covered
+by that license.
