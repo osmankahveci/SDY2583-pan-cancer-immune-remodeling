@@ -146,7 +146,7 @@ get_spill <- function(ff){
 ff<-flowCore::read.FCS(fcs,transformation=FALSE,truncate_max_range=FALSE)
 pd<-Biobase::pData(flowCore::parameters(ff)); desc<-if("desc"%in%names(pd))as.character(pd$desc) else rep(NA_character_,ncol(ff)); desc[is.na(desc)|desc==""]<-colnames(ff)[is.na(desc)|desc==""]
 audit<-data.frame(channel=colnames(ff),marker_description=desc,stringsAsFactors=FALSE)
-norm<-function(x)toupper(gsub("[^A-Z0-9]","",x))
+norm<-function(x)gsub("[^A-Z0-9]","",toupper(x))
 alias<-list(DUMP=c("VIABILITY","DUMP"),HLA_DR=c("HLADR"),FceRI=c("FCERI","FCER1"),PD1=c("PD1"),TIM3=c("TIM3"),LAG3=c("LAG3"),CTLA4=c("CTLA4"),VA24_JA11_TCR=c("VA24JA11TCR","VALPHA24JALPHA11TCR"),VDELTA2=c("VDELTA2","VD2"),VALPHA7=c("VALPHA7","VA7"))
 resolve<-function(m){
  keys<-unique(c(norm(m),alias[[m]])); hit<-which(vapply(norm(desc),function(d)any(vapply(keys,function(k)grepl(k,d,fixed=TRUE),logical(1))),logical(1)))
