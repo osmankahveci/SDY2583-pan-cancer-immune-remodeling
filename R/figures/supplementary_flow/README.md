@@ -1,6 +1,6 @@
-# Supplementary flow-cytometry figure workflows
+# Supplementary flow-cytometry figure workflow
 
-This directory contains the reconstructed R workflows used to generate the ten
+This directory contains the reconstructed R workflow used to generate the ten
 representative event-level supplementary flow atlases for the SDY2583
 pan-cancer manuscript.
 
@@ -19,11 +19,11 @@ pan-cancer manuscript.
 | S9 | CP26 | NK-like receptor and maturation phenotypes |
 | S10 | CP28 | T/NK-interface phenotypes |
 
-The scripts produce white-background pseudocolor density plots with analytical
-threshold lines, parent-population event counts, and percentages calculated from
-all events in the stated parent. Only the displayed point layer is downsampled
-and rasterized; text, axes, threshold lines, and labels remain vector elements in
-the PDF.
+The shared workflow produces white-background pseudocolor density plots with
+analytical threshold lines, parent-population event counts, and percentages
+calculated from all events in the stated parent. Only the displayed point layer
+is downsampled and rasterized; text, axes, threshold lines, and labels remain
+vector elements in the PDF.
 
 ## Public-data boundary
 
@@ -32,7 +32,7 @@ participant-specific validation values, and generated event-level outputs are
 not included in this repository. Obtain the source files directly from ImmPort
 under SDY2583.
 
-Each script receives its representative FCS path through a local environment
+The workflow receives each representative FCS path through a local environment
 variable. Do not replace the portable input variables with author-specific
 absolute paths before committing changes.
 
@@ -55,14 +55,16 @@ set +a
 ```
 
 Set `SDY2583_FLOW_OUTPUT_DIR` to a local output directory. When it is not set,
-the scripts write to `outputs/supplementary_flow/`, which is excluded from Git.
+the workflow writes to `outputs/supplementary_flow/`, which is excluded from
+Git.
 
 ## Run
 
-Run one panel directly:
+Run one panel:
 
 ```bash
-Rscript R/figures/supplementary_flow/RECONSTRUCTED/CP7_supplementary_flow_atlas.R
+SDY2583_FLOW_PANEL=CP7 \
+Rscript R/figures/supplementary_flow/RECONSTRUCTED/run_supplementary_flow_atlas.R
 ```
 
 Run all configured panels:
@@ -78,14 +80,15 @@ SDY2583_FLOW_PANELS=CP7,CP22,CP24 \
 Rscript scripts/50_run_supplementary_flow_figures.R
 ```
 
-The runner skips an unselected panel, but a selected panel stops with an
-informative error when its required FCS environment variable is unset or the
-file is missing.
+A selected panel stops with an informative error when its required local FCS
+environment variable is unset, its file is missing, its marker map cannot be
+resolved, its spillover matrix cannot be applied where required, or a required
+parent population has insufficient events.
 
 ## Preprocessing and interpretation
 
-Most panel scripts read raw FCS values without automatic transformation, apply
-the file-level spillover matrix, and then use a fixed logicle transformation
+Most panels are read without automatic transformation, compensated using the
+file-level spillover matrix, and transformed using a fixed logicle transform
 with `W = 0.5`, `T = 262144`, `M = 4.5`, and `A = 0`. CP22 follows its completed
 analysis workflow and does not apply an additional compensation step when the
 embedded spillover information is not directly usable as a matrix.
@@ -94,7 +97,7 @@ The plotted gates are the fixed analytical thresholds used by the automated
 feature-extraction workflows. They document the analytical architecture and are
 not exact reproductions of manually drawn FlowJo polygons.
 
-Panel-specific interpretation limits remain explicit in the script comments.
+Panel-specific interpretation limits remain explicit in the code and captions.
 Examples include the absence of definitive DC identity in CP16, the
 phenotype-like rather than functional interpretation of CP22 and CP23
 populations, the absence of FOXP3 in CP25, and the absence of CD16 for canonical
@@ -102,13 +105,13 @@ NK-subset classification in CP28.
 
 ## Provenance and validation status
 
-These files are marked `RECONSTRUCTED`. They were rebuilt from archived channel
-maps, threshold registries, completed Methods/Results records, and the local
-representative-figure workflows. The code has been screened to exclude raw data,
-participant identifiers, participant-specific metrics, and author-specific
-paths.
+The workflow is marked `RECONSTRUCTED`. It was rebuilt from archived channel
+maps, threshold registries, completed Methods/Results records, and local
+representative-figure workflows. The public source has been screened to exclude
+raw data, participant identifiers, participant-specific metrics, and
+author-specific paths.
 
-The repository CI can perform data-free source checks, but it cannot execute
-these scripts without local raw FCS files. A submission-ready figure should be
+Repository CI can perform data-free source checks, but it cannot execute this
+workflow without local raw FCS files. A submission-ready figure should be
 accepted only after local execution, channel-audit review, parent-event review,
 percentage-table review, and visual inspection of the exported PDF.
