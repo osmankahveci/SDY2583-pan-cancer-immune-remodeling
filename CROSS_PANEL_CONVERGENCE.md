@@ -1,46 +1,54 @@
 # Cross-panel convergence analysis
 
-This analysis tests whether independently generated SDY2583 immune-remodeling scores converge at the subject level across cytometry panels.
+This project contains two complementary cross-panel analyses.
 
-## Input
+## 1. Full-cohort convergence analysis
+
+The original integrated analysis tests whether independently generated
+SDY2583 immune-remodeling scores converge at the subject level across cytometry
+panels.
 
 Provide the participant-level ALL10 score matrix through:
 
 ```bash
 export SDY2583_CROSS_PANEL_MATRIX_FILE="/path/to/SDY2583_integrated_clinical_immune_score_matrix_ALL10_with_CP23.csv"
-```
-
-Alternatively, place a compatible integrated score matrix under `SDY2583_INTEGRATED_DIR`; the script prioritizes filenames containing `ALL10`, `with_CP23`, or `ALL_PANELS`.
-
-## Run
-
-```bash
 Rscript scripts/40_run_cross_panel_convergence.R
 ```
 
-## Statistical design
+The full-cohort analysis residualizes principal scores for age, sex and disease,
+calculates pairwise Spearman correlations, applies BH FDR, and evaluates
+cancer-only and healthy-only directional robustness. In the locked v1.0.0
+results, 38/45 principal-score relationships were FDR-significant.
 
-The script calculates all pairwise Spearman correlations among analyzable composite scores and distinguishes cross-panel from within-panel pairs.
+## 2. v1.1.0 locked held-out architecture
 
-- Full-cohort scores are residualized for age, sex, and disease group.
-- Cancer-only and healthy-only scores are residualized for age and sex.
-- Benjamini–Hochberg FDR is calculated globally and within the cross-panel/within-panel analysis scope.
-- A minimum of 50 pairwise complete observations is required by default; this can be changed with `SDY2583_CROSS_PANEL_MIN_N`.
-- Prespecified convergence summaries cover CP7–CP24, CP7–CP28, CP24–CP28, CP8–CP25, CP10–CP16, CP10–CP23, CP16–CP23, and CP26–CP28.
+The locked internal validation asks a different question: whether the
+cross-panel correlation architecture learned under a training-frozen workflow
+is retained in the original held-out VALIDATION cohort.
 
-## Main outputs
+Run:
 
-The default output folder is `09_cross_panel_convergence` under `SDY2583_INTEGRATED_DIR`.
+```bash
+Rscript scripts/44_run_locked_internal_validation.R
+```
 
-- full pairwise correlation table;
-- cross-panel-only correlation table;
-- panel-pair convergence summary;
-- prespecified biological-axis summary;
-- robustness table comparing full, cancer-only, and healthy-only directions;
-- one automatically selected integrated/core score per panel;
-- panel-level heatmap in PNG and PDF;
-- principal-score heatmap in PNG and PDF;
-- principal-score network in PNG and PDF when qualifying edges are present;
-- manifest, text summary, and R session information.
+For each principal score, age/sex/disease residualization coefficients are fit
+only in TRAINING and projected into VALIDATION. Pairwise Spearman correlations
+are then calculated separately in TRAINING and VALIDATION.
 
-Participant-level matrices and generated outputs remain local and are excluded from Git.
+Aggregate reference results:
+
+- 45 principal-score panel pairs tested;
+- 40/45 retained the same correlation direction;
+- 35/45 were BH-FDR significant in VALIDATION;
+- TRAINING-versus-VALIDATION rho concordance: Pearson r = 0.700, p = 8.74e-8;
+- Spearman concordance: rho = 0.676, p = 3.54e-7.
+
+This is evidence of internal architectural generalization, not an external
+cohort validation.
+
+## Public outputs
+
+Aggregate cross-panel tables are under `results/final/`. Participant-level
+residuals, participant identifiers, score matrices and individual PCA
+coordinates remain local and are excluded from Git.
