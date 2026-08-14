@@ -1,0 +1,14 @@
+metric,value
+Original training subjects,503.0
+Original validation subjects,347.0
+Principal scores same direction in validation,9.0
+Principal scores validation BH-FDR < 0.05,9.0
+All 66 scores same direction in validation,60.0
+All 66 scores validation BH-FDR < 0.05,44.0
+PC1 training explained variance fraction,0.3943345290911339
+PC1 validation cancer beta,1.5686035917619785
+PC1 validation p,6.010798145513825e-20
+Cross-panel correlations same direction,40.0
+Cross-panel validation correlations BH-FDR < 0.05,35.0
+Correlation-effect concordance Pearson r,0.6999793159611416
+Correlation-effect concordance Pearson p,8.73654775782534e-08
