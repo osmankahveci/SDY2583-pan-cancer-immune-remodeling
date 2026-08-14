@@ -1,0 +1,67 @@
+Panel,Composite score,Principal score,Coverage rule
+CP7,CP7_CD8_differentiation_remodeling_score,No,At least one non-missing component; undefined when all components are missing
+CP7,CP7_CD39_enrichment_score,No,At least one non-missing component; undefined when all components are missing
+CP7,CP7_PD1_TIGIT_attenuation_score,No,At least one non-missing component; undefined when all components are missing
+CP7,CP7_checkpoint_coexpression_score,No,At least one non-missing component; undefined when all components are missing
+CP7,CP7_terminal_checkpoint_remodeling_score,No,At least one non-missing component; undefined when all components are missing
+CP7,CP7_integrated_checkpoint_remodeling_score,Yes,At least one non-missing component; undefined when all components are missing
+CP8,CP8_CD4_composition_depletion_score,No,At least one non-missing component; undefined when all components are missing
+CP8,CP8_CD4_memory_differentiation_score,No,At least one non-missing component; undefined when all components are missing
+CP8,CP8_Treg_like_enrichment_score,No,At least one non-missing component; undefined when all components are missing
+CP8,CP8_CCR6_CCR4_helper_remodeling_score,No,At least one non-missing component; undefined when all components are missing
+CP8,CP8_Tfh_attenuation_score,No,At least one non-missing component; undefined when all components are missing
+CP8,CP8_integrated_CD4_helper_regulatory_remodeling_score,Yes,At least one non-missing component; undefined when all components are missing
+CP10,CP10_granulocyte_like_enrichment_score,No,At least one non-missing component; undefined when all components are missing
+CP10,CP10_myeloid_granulocytic_to_lymphoid_balance_score,No,At least one non-missing component; undefined when all components are missing
+CP10,CP10_monocyte_like_HLA_DR_phenotype_remodeling_score,No,At least one non-missing component; undefined when all components are missing
+CP10,CP10_APC_like_myeloid_enrichment_score,No,At least one non-missing component; undefined when all components are missing
+CP10,CP10_CCR3_eosinophil_like_granulocytic_enrichment_score,No,At least one non-missing component; undefined when all components are missing
+CP10,CP10_integrated_myeloid_granulocytic_remodeling_score,Yes,At least one non-missing component; undefined when all components are missing
+CP16,CP16_CD1c_cDC2_like_depletion_score,No,At least half of defined components available
+CP16,CP16_CD123_pDC_like_depletion_score,No,At least half of defined components available
+CP16,CP16_CD141_CLEC9A_cDC1_like_depletion_score,No,At least half of defined components available
+CP16,CP16_monocyte_HLA_DR_low_remodeling_score,No,At least half of defined components available
+CP16,CP16_APC_core_attenuation_score,No,At least half of defined components available
+CP16,CP16_integrated_APC_DC_myeloid_remodeling_score,Yes,At least half of defined components available
+CP22,CP22_B_cell_composition_depletion_score,No,At least one non-missing component; undefined when all components are missing
+CP22,CP22_core_switched_memory_repatterning_score,No,At least one non-missing component; undefined when all components are missing
+CP22,CP22_Ig_isotype_repatterning_score,No,At least one non-missing component; undefined when all components are missing
+CP22,CP22_plasmablast_activation_enrichment_score,No,At least one non-missing component; undefined when all components are missing
+CP22,CP22_transitional_immature_B_enrichment_score,No,At least one non-missing component; undefined when all components are missing
+CP22,CP22_CD39_regulatory_like_attenuation_score,No,At least one non-missing component; undefined when all components are missing
+CP22,CP22_integrated_humoral_B_cell_remodeling_score,Yes,At least one non-missing component; undefined when all components are missing
+CP23,CP23_CD45_dump_low_myeloid_enrichment_score,No,At least one non-missing component; undefined when all components are missing
+CP23,CP23_CD9_CD84_activation_attenuation_score,No,At least one non-missing component; undefined when all components are missing
+CP23,CP23_FcERI_myeloid_attenuation_score,No,At least one non-missing component; undefined when all components are missing
+CP23,CP23_CD33_HLA_DR_myeloid_repatterning_score,No,At least one non-missing component; undefined when all components are missing
+CP23,CP23_integrated_monocyte_macrophage_like_myeloid_remodeling_score,Yes,At least one non-missing component; undefined when all components are missing
+CP24,CP24_marker_loss_score,No,At least one non-missing component; undefined when all components are missing
+CP24,CP24_quadrant_shift_score,No,At least one non-missing component; undefined when all components are missing
+CP24,CP24_CD27_refined_terminal_score,No,At least one non-missing component; undefined when all components are missing
+CP24,CP24_extended_effector_score,No,At least one non-missing component; undefined when all components are missing
+CP24,CP24_PD1_associated_terminal_score,No,At least one non-missing component; undefined when all components are missing
+CP24,CP24_core_differentiation_score,No,At least one non-missing component; undefined when all components are missing
+CP24,CP24_integrated_remodeling_score,Yes,At least one non-missing component; undefined when all components are missing
+CP25,CP25_CD4_composition_depletion_score,No,At least one non-missing component; undefined when all components are missing
+CP25,CP25_CD45RA_CD27_differentiation_score,No,At least one non-missing component; undefined when all components are missing
+CP25,CP25_regulatory_like_enrichment_score,No,At least one non-missing component; undefined when all components are missing
+CP25,CP25_total_checkpoint_regulatory_marker_score,No,At least one non-missing component; undefined when all components are missing
+CP25,CP25_checkpoint_coexpression_score,No,At least one non-missing component; undefined when all components are missing
+CP25,CP25_regulatory_like_checkpoint_enrichment_score,No,At least one non-missing component; undefined when all components are missing
+CP25,CP25_CD39_ICOS_regulatory_axis_score,No,At least one non-missing component; undefined when all components are missing
+CP25,CP25_PD1_LAG3_regulatory_axis_score,No,At least one non-missing component; undefined when all components are missing
+CP25,CP25_integrated_CD4_regulatory_checkpoint_remodeling_score,Yes,At least one non-missing component; undefined when all components are missing
+CP26,CP26_NK_like_composition_depletion_score,No,At least one non-missing component; undefined when all components are missing
+CP26,CP26_CD56_CD16_mature_NK_depletion_score,No,At least one non-missing component; undefined when all components are missing
+CP26,CP26_NK_receptor_maturation_attenuation_score,No,At least one non-missing component; undefined when all components are missing
+CP26,CP26_NKG2C_adaptive_like_shift_score,No,At least one non-missing component; undefined when all components are missing
+CP26,CP26_integrated_NK_remodeling_score,Yes,At least one non-missing component; undefined when all components are missing
+CP28,CP28_T_cell_composition_depletion_score,No,At least one non-missing component; undefined when all components are missing
+CP28,CP28_CD8_enrichment_within_T_score,No,At least one non-missing component; undefined when all components are missing
+CP28,CP28_CD8_CD45RA_TEMRA_differentiation_score,No,At least one non-missing component; undefined when all components are missing
+CP28,CP28_CD8_CD57_effector_like_score,No,At least one non-missing component; undefined when all components are missing
+CP28,CP28_CD8_CD161_attenuation_score,No,At least one non-missing component; undefined when all components are missing
+CP28,CP28_Va24_Valpha7_CD8_innate_like_score,No,At least one non-missing component; undefined when all components are missing
+CP28,CP28_CD56_NK_like_T_score,No,At least one non-missing component; undefined when all components are missing
+CP28,CP28_CD3neg_CD56pos_NK_like_depletion_score,No,At least one non-missing component; undefined when all components are missing
+CP28,CP28_integrated_TNK_interface_remodeling_score,Yes,At least one non-missing component; undefined when all components are missing
