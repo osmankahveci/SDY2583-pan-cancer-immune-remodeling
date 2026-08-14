@@ -1,0 +1,2 @@
+training_complete_n,validation_complete_n,PC1_training_explained_variance_fraction,PC1_training_cancer_beta,PC1_training_ci_low,PC1_training_ci_high,PC1_training_p,PC1_validation_cancer_beta,PC1_validation_ci_low,PC1_validation_ci_high,PC1_validation_p,PC1_orientation
+485,344,0.3943345290911339,2.1482296367523075,1.8151244899848358,2.481334783519779,1.2703618283529697e-36,1.5686035917619785,1.2323874324074193,1.9048197511165377,6.010798145513825e-20,oriented so training cancer coefficient is positive; validation projected using frozen training centering/scaling/loadings
