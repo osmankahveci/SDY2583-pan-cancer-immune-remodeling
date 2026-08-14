@@ -23,6 +23,22 @@ Primary held-out reference result: 9/10 principal scores replicated with the
 same direction and ten-test BH-FDR < 0.05; CP24 did not replicate and remains
 reported as such.
 
+## Locked leave-one-cancer-type-out robustness
+
+- `locked_loco_baseline_results.csv`
+- `locked_loco_score_summary.csv`
+- `locked_loco_omission_summary.csv`
+- `locked_loco_cancer_group_counts.csv`
+- `locked_loco_beta_matrix.csv`
+
+The LOCO runner regenerates the complete 80-model table locally. The public
+reference summaries show that all 80 cancer coefficients retained the positive
+cancer-associated direction and 79/80 remained significant after a global
+80-test BH correction. CP24 after sarcoma omission was the only inferential
+exception and remains reported without retuning.
+
+See [`../../LOCO_ROBUSTNESS.md`](../../LOCO_ROBUSTNESS.md).
+
 ## Cross-panel, immunotype, PCA, and clustering evidence
 
 - `manuscript_locked_key_results.csv`
@@ -59,5 +75,5 @@ PCA coordinates are intentionally excluded.
 - `bootstrap_component_stability_summary.json`
 
 Values are tied to documented scripts, input schemas, software implementation
-and the accepted validation boundaries. Internal stability and held-out
-validation are not external validation.
+and the accepted validation boundaries. Internal stability, held-out validation,
+and leave-one-cancer-type-out robustness are not external validation.
