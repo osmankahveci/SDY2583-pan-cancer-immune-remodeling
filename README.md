@@ -3,13 +3,17 @@
 Reproducible code and aggregate validation outputs for the secondary multi-panel
 reanalysis of ImmPort **SDY2583 — Blood Immunotypes**. The project covers ten
 flow-cytometry panels (CP7, CP8, CP10, CP16, CP22, CP23, CP24, CP25, CP26, and
-CP28) and the final integrated analyses used in the associated manuscript,
+CP28) and the integrated analyses used in the associated manuscript,
 *Convergent Peripheral Immune Remodeling Across Lymphoid and Myeloid
 Compartments in Cancer*.
 
 ## Release status
 
-**Version 1.0.0 — final public reproducibility release**
+**Version 1.1.0 — locked internal validation release**
+
+Version 1.1.0 retains the complete v1.0.0 reproducibility package and adds a
+training-frozen held-out validation layer using the original 503-participant
+TRAINING and 347-participant VALIDATION assignment.
 
 This repository contains:
 
@@ -22,32 +26,31 @@ This repository contains:
 - Table 1 and panel-availability generation;
 - 2,000-resample bootstrap component-stability analysis;
 - the locked v6 code for the integrated Figure 7;
+- **locked internal held-out validation of the 66-score framework**;
 - curated aggregate results supporting the manuscript.
 
 Raw FCS files, participant-level metadata, participant-level feature/score
-matrices, matched subject identifiers, serialized workspaces, and generated
-participant-level outputs are not distributed.
+matrices, matched subject identifiers, serialized workspaces, individual PCA
+coordinates, and generated participant-level outputs are not distributed.
 
-### Accepted validation boundary
+### Validation layers
 
-All ten manuscript panels completed independent **downstream archive
-validation** from archived participant-level feature, metadata, score, matching,
-interaction, and threshold-sensitivity tables. A fresh raw-FCS-to-results rerun
-was not performed. Compensation, logicle transformation, primary threshold
-regeneration, and regeneration of participant-level feature tables therefore
-remain outside the accepted validation scope.
+The repository distinguishes two different uses of the word validation.
 
-Accurate release description:
+**Downstream archive validation** tests whether archived panel-level analytical
+outputs can be independently reconstructed from archived post-extraction tables.
+All ten manuscript panels completed this layer. A fresh raw-FCS-to-results rerun
+was not performed; compensation, transformation, primary threshold regeneration
+and regeneration of participant-level feature tables remain outside that scope.
 
-> Provenance-tracked all-panel reproducibility release with downstream analyses independently archive-validated and final integrated analyses numerically executed on the local ALL10 matrix. Fresh raw-FCS end-to-end re-execution was not performed.
+**Locked internal held-out validation** is the v1.1.0 analysis. The original
+503/347 TRAINING/VALIDATION assignment is retained. Component orientation,
+centering/scaling and PCA fitting are learned only in TRAINING and then frozen
+before application to VALIDATION. Score membership remains fixed from the
+existing 66-score registry.
 
-Source provenance remains explicit:
-
-- **`SAFE`** — recovered archived source with portability/non-interactive edits only.
-- **`RECONSTRUCTED`** — source rebuilt from archived thresholds, schemas,
-  composite definitions, Methods/Results records, and numerical output tables.
-
-See [`VALIDATION_STATUS.md`](VALIDATION_STATUS.md),
+See [`LOCKED_INTERNAL_VALIDATION.md`](LOCKED_INTERNAL_VALIDATION.md),
+[`VALIDATION_STATUS.md`](VALIDATION_STATUS.md),
 [`PROVENANCE.md`](PROVENANCE.md), and
 [`validation/ALL_PANEL_DOWNSTREAM_VALIDATION_SUMMARY.md`](validation/ALL_PANEL_DOWNSTREAM_VALIDATION_SUMMARY.md).
 
@@ -60,9 +63,9 @@ The local master matrix contains 850 participants:
 - 503 participants in the original training cohort;
 - 347 participants in the original validation cohort.
 
-The full integrated catalogue contains 66 directionally oriented composite
-scores. The main cross-panel narrative is based on ten prespecified principal
-scores representing eight biological axes:
+The full integrated catalogue contains 66 composite scores. The main cross-panel
+narrative is based on ten prespecified principal scores representing eight
+biological axes:
 
 1. CD8 differentiation/checkpoint remodeling — CP7 and CP24
 2. CD4 helper/regulatory-like remodeling — CP8 and CP25
@@ -77,10 +80,34 @@ The CP22 immunoglobulin-isotype score represents denominator-specific B-cell
 isotype architecture/repatterning. It is not a measure of total IgG, total IgA,
 or circulating immunoglobulin concentration.
 
-## Final integrated results
+## Locked internal held-out results
 
-Curated aggregate tables are under [`results/final/`](results/final/).
-Manuscript-level checks include:
+With direction, centering/scaling and hierarchical score rebuilding frozen from
+TRAINING, **9/10 principal scores replicated** in VALIDATION with the same
+direction and BH-FDR < 0.05. CP24 did not replicate (validation beta -0.022,
+95% CI -0.224 to 0.180; BH-q 0.830) and is retained transparently as a
+non-replicated axis.
+
+Across all 66 locked scores:
+
+- 60/66 retained the TRAINING direction in VALIDATION;
+- 44/66 were significant in VALIDATION after 66-test BH correction.
+
+A PCA fitted only in TRAINING explained 39.43% of variance on PC1. Projection
+into VALIDATION without refitting retained a strong cancer-associated PC1 effect
+(beta 1.569, 95% CI 1.232 to 1.905; p = 6.01e-20).
+
+For the 45 principal-score panel pairs, 40/45 correlations retained direction
+and 35/45 were validation-significant after BH correction. TRAINING-versus-
+VALIDATION correlation-effect concordance was Pearson r = 0.700 (p = 8.74e-8).
+
+These findings are **internal held-out validation, not external validation**.
+Score membership predates the locked split analysis and remains an explicit
+limitation.
+
+## Original final integrated results
+
+The v1.0.0 integrated evidence remains available under [`results/final/`](results/final/):
 
 - 38/45 age-, sex-, and disease-adjusted Spearman relationships among the ten
   principal scores were FDR-significant;
@@ -88,11 +115,9 @@ Manuscript-level checks include:
 - all 38 Spearman-significant relationships retained direction in both the
   cancer-only and healthy-only analyses;
 - all ten principal scores differed across the five original immunotypes in the
-  full, training, validation, cancer-only, and treatment-adjusted cancer-only
-  analyses;
+  full, training, validation, cancer-only, and treatment-adjusted cancer-only analyses;
 - disease-adjusted PC1 explained 30.5% and PC2 explained 16.6% of variance;
-- the integrated space showed non-random structure but weak discrete-cluster
-  separation (maximum non-GMM silhouette approximately 0.207);
+- maximum non-GMM silhouette was approximately 0.207;
 - all eight representative bounded percentage outcomes retained direction and
   FDR significance across linear-HC3, empirical-logit, beta-regression, and
   age-matched paired analyses;
@@ -100,9 +125,6 @@ Manuscript-level checks include:
 - across 2,000 disease-stratified bootstrap resamples, 62/66 scores retained
   direction in at least 95% of resamples and all ten principal score intervals
   excluded zero.
-
-These are internal reproducibility and convergent-validity results, not an
-independent external validation cohort.
 
 ## Data access
 
@@ -119,13 +141,14 @@ Use remains subject to ImmPort terms. See [`DATA_ACCESS.md`](DATA_ACCESS.md).
 
 ```text
 R/
-  integration/                     metadata and cross-panel builders
+  integration/                     integrated and locked-validation workflows
   figures/                         final integrated Figure 7 code
   shared/                          portable paths and workflow engines
   panels/CP*/                      panel-specific SAFE/RECONSTRUCTED source
 config/
   paths.example.R
   final_analysis_paths.example.env
+  locked_validation/               public 66-score membership registries
 scripts/
   01_run_all_panels.R
   10-19 panel runners
@@ -135,6 +158,7 @@ scripts/
   41_run_integrated_systems_analysis.py
   42_run_frequency_matching_table1.py
   43_run_bootstrap_component_stability.py
+  44_run_locked_internal_validation.R
 results/final/                     public aggregate-only final results
 validation/                        downstream archive-validation evidence
 analysis_notes/                    locked scientific interpretation records
@@ -166,62 +190,48 @@ and source it. Do not commit participant-level paths or data.
 
 ## Running the panel workflows
 
-Run all ten panel pipelines:
-
 ```bash
 Rscript scripts/01_run_all_panels.R
 ```
 
-Run selected panels:
+For selected panels:
 
 ```bash
 SDY2583_PANELS=CP7,CP8,CP25 Rscript scripts/01_run_all_panels.R
 ```
 
-The all-panel release remains subject to the validation boundary above; it must
-not be described as a newly completed raw-FCS end-to-end execution.
-
 ## Running the final integrated analyses
-
-After setting the local input paths:
 
 ```bash
 bash scripts/40_run_final_integrated_release.sh
 ```
 
-The runner executes:
+## Running locked internal validation
 
-1. integrated convergence, immunotype, PCA, and clustering analyses;
-2. bounded-outcome models, matching diagnostics, and Table 1 generation;
-3. the 2,000-resample bootstrap stability analysis;
-4. the v6 integrated Figure 7 workflow when `Rscript` is available.
+Set a common local archive root or explicit per-file environment variables:
 
-Individual commands are documented in the scripts and in
-[`docs/FINAL_INTEGRATED_ANALYSIS_RELEASE.md`](docs/FINAL_INTEGRATED_ANALYSIS_RELEASE.md).
+```bash
+export SDY2583_LOCKED_INPUT_ROOT="/path/to/local/SDY2583/analysis/archive"
+Rscript scripts/44_run_locked_internal_validation.R
+```
+
+The locked-validation script writes aggregate outputs only. See
+[`LOCKED_INTERNAL_VALIDATION.md`](LOCKED_INTERNAL_VALIDATION.md) for the exact
+methodological and interpretation boundary.
 
 ## Public-output boundary
 
 The `results/final/` directory contains aggregate tables only. Public outputs do
-not include:
-
-- participant identifiers;
-- participant-level scores or predictions;
-- matched-pair subject IDs;
-- individual PCA coordinates;
-- raw event-level data;
-- FCS files.
+not include participant identifiers, participant-level scores or predictions,
+matched-pair IDs, individual PCA coordinates, raw event-level data, or FCS files.
 
 ## Static checks
-
-A data-free audit parses R source, checks runner references and panel coverage,
-rejects author-specific executable paths and interactive file selection, and
-screens for accidentally committed data:
 
 ```bash
 Rscript scripts/02_static_source_audit.R
 ```
 
-The same audit runs through GitHub Actions.
+The same data-free audit runs through GitHub Actions.
 
 ## Citation and license
 
